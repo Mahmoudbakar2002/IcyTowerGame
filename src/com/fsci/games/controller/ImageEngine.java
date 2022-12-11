@@ -33,6 +33,15 @@ public class ImageEngine {
         addCharacterState(Character.State.IDLE,characterName);
         addCharacterState(Character.State.IDLE1,characterName);
         addCharacterState(Character.State.IDLE2,characterName);
+        addCharacterState(Character.State.CHOCK,characterName);
+        addCharacterState(Character.State.WALK1,characterName);
+        addCharacterState(Character.State.WALK2,characterName);
+        addCharacterState(Character.State.WALK3,characterName);
+        addCharacterState(Character.State.WALK4,characterName);
+        addCharacterState(Character.State.JUMP,characterName);
+        addCharacterState(Character.State.JUMP1,characterName);
+        addCharacterState(Character.State.JUMP2,characterName);
+        addCharacterState(Character.State.JUMP3,characterName);
         return character;
     }
 }

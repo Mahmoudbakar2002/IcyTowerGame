@@ -34,12 +34,9 @@ public class Character implements DrawableGlObject {
 
     /* create enum state*/
     public enum State{
-        IDLE(0),IDLE1(1),IDLE2(2);
-        int id;
-        State(int id){
-            this.id=id;
-        }
+        IDLE,IDLE1,IDLE2,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK ;
     }
+
 
     public void changeLocation(double deltaX,double deltaY){
         x+=deltaX;
@@ -56,7 +53,10 @@ public class Character implements DrawableGlObject {
         this.height=height;
         this.width=width;
     }
-
+    public void setLocation(double x,double y){
+        this.x=x;
+        this.y=y;
+    }
 
     @Override
     public void draw(GL gl) {
