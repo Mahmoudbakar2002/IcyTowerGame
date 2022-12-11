@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageEngine {
-    private static final String PATH_FOR_CHARACTER="assets/characters/harold/idle.png";
+    private static final String PATH_FOR_CHARACTER="assets/characters/";
 
     private static Map<String ,Map<Character.State, Image>> characters;
     static {
@@ -20,7 +20,7 @@ public class ImageEngine {
         String imageName=state.toString().toLowerCase() + ".png";
 
         try {
-            character.put(state,new Image( PATH_FOR_CHARACTER+"/"+name+ imageName));
+            character.put(state,new Image( PATH_FOR_CHARACTER+"/"+name+"/"+ imageName));
         } catch (IOException e) {
             // here we handle if the character state not found
             e.printStackTrace();

@@ -2,39 +2,40 @@ package com.fsci.games.views;
 
 import com.bakar.assest.opengl.ListenerPanel;
 import com.bakar.assest.opengl.texture.Image;
+import com.fsci.games.controller.ImageEngine;
 import com.fsci.games.model.Character;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
 import java.io.IOException;
+import java.util.Map;
 
 public class GameEngine extends ListenerPanel {
 
     Image image ;
+    Character player;
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
-        GLU glu=new GLU();
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLU glu= new GLU();
+        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glLoadIdentity();
+        gl.glOrtho(0, 600, 0, 600, -1.0, 1.0);
 
         gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
-        try {
-            image =new Image("assets/characters/harold/idle.png");
-            image.loadInGl(gl,glu);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        Map<Character.State, Image> collection = ImageEngine.loadCharacterImagesState("harold");
+        for(Map.Entry entry: collection.entrySet()){
+            ((Image)entry.getValue()).loadInGl(gl,glu);
         }
-        image.setX(100);
-
-        gl.glMatrixMode(GL.GL_PROJECTION);
-        gl.glClearColor(0,0,0,1);
-        gl.glLoadIdentity();
-        gl.glOrtho(0, 600, 0, 600, -1.0, 1.0);
-
+        player= Character.getCharacter(collection);
+        player.changeLocation(100,20);
     }
 
     @Override
@@ -43,7 +44,8 @@ public class GameEngine extends ListenerPanel {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
 
-
+        player.draw(gl);
+        player.changeLocation(0,0);
         gl.glColor3f(1,1,1);
         gl.glBegin(GL.GL_LINES);
         gl.glVertex2i(0,20);
