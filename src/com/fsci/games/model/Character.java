@@ -19,6 +19,14 @@ public class Character implements DrawableGlObject {
     private State currentState;
     private Map<State, Image> stateImageMap;
 
+    /* singleton pattern */
+    private static final Character singleton;
+    static {singleton=new Character();}
+    public static Character getCharacter(Map<State, Image> stateImageMap) {
+        singleton.stateImageMap=stateImageMap;
+        return singleton;
+    }
+
     private Character(){
         stateImageMap=new HashMap<>();
         currentState=State.IDLE;
