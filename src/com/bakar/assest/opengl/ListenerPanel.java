@@ -20,13 +20,13 @@ public abstract class  ListenerPanel implements GLEventListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode()>= bitSet.length()) return;
+//        if(e.getKeyCode()>= bitSet.length()) return;
         bitSet.set(e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode()>= bitSet.length()) return;
+//        if(e.getKeyCode()>= bitSet.length()) return;
         bitSet.set(e.getKeyCode(),false);
     }
 
