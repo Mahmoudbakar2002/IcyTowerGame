@@ -20,7 +20,9 @@ public class GameEngine extends ListenerPanel {
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         GLU glu= new GLU();
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+//        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
@@ -43,10 +45,10 @@ public class GameEngine extends ListenerPanel {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
-
+        gl.glColor3f(1,1,1);
         player.draw(gl);
         player.changeLocation(0,0);
-        gl.glColor3f(0,0,0);
+//        gl.glColor3f(0,0,0);
         gl.glBegin(GL.GL_LINES);
         gl.glVertex2i(0,20);
         gl.glVertex2i(600,20);
