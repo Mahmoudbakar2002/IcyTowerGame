@@ -67,8 +67,8 @@ public class Character implements DrawableGlObject {
             image=stateImageMap.get(currentState);
 
         gl.glTranslated(x,y,0);
-        image.setHeight(height);
-        image.setWidth(width);
+        if(height!=0)image.setHeight(height);
+        if(width!=0)image.setWidth(width);
         image.draw(gl);
     }
 }
