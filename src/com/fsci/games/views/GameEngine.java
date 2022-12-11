@@ -8,13 +8,22 @@ import com.fsci.games.model.Character;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
 
 public class GameEngine extends ListenerPanel {
 
-    Image image ;
-    Character player;
+    private long time;
+    private Character player;
+    private double deltaX,deltaY;
+
+    public void resetGame(){
+        player.setLocation(100,20);
+        time=0;
+        deltaX=0;
+        deltaY=0;
+    }
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
@@ -36,19 +45,26 @@ public class GameEngine extends ListenerPanel {
         for(Map.Entry entry: collection.entrySet()){
             ((Image)entry.getValue()).loadInGl(gl,glu);
         }
+
         player= Character.getCharacter(collection);
-        player.changeLocation(100,20);
+
+        resetGame();
     }
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
+        time++;
+
+        if(isKeyPressed(KeyEvent.VK_RIGHT)) deltaX=5;
 
         gl.glColor3f(1,1,1);
         player.draw(gl);
-        player.changeLocation(0,0);
+
+        player.changeLocation(deltaX,deltaY);
 //        gl.glColor3f(0,0,0);
+
         gl.glBegin(GL.GL_LINES);
         gl.glVertex2i(0,20);
         gl.glVertex2i(600,20);
@@ -62,4 +78,5 @@ public class GameEngine extends ListenerPanel {
     @Override
     public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
     }
+
 }
