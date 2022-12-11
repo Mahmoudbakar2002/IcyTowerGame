@@ -31,7 +31,7 @@ public class GameFrame extends JFrame {
         gamePanel.addGLEventListener(engine);
         this.add(gamePanel, BorderLayout.CENTER);
         // animator
-        fps =new FPSAnimator(gamePanel,3);
+        fps =new FPSAnimator(gamePanel,1);
         fps.start();
 
     }

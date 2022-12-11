@@ -46,7 +46,7 @@ public class GameEngine extends ListenerPanel {
 
         player.draw(gl);
         player.changeLocation(0,0);
-        gl.glColor3f(1,1,1);
+        gl.glColor3f(0,0,0);
         gl.glBegin(GL.GL_LINES);
         gl.glVertex2i(0,20);
         gl.glVertex2i(600,20);
