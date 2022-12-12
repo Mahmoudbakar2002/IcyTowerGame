@@ -14,16 +14,25 @@ import java.util.Map;
  * author : mahmoud atef (bakar)
  * */
 public class Character implements DrawableGlObject {
+
+    /** character properties */
     private double x,y;
     private double height,width;
-    private double xScale=1;
-    private double yScale=1;
+    private double xScale;
+    private double yScale;
     private State currentState;
     private Map<State, Image> stateImageMap;
 
 
+    /*
+    *  state and internal time use for update character state
+    *  if state equal 0 is still stand
+    *  if state equal 1 is moving positive moving
+    *  if state equal -1 is moving negative moving
+    */
     private double xState,yState;
     private long internalTime;
+
     /* singleton pattern */
     private static final Character singleton;
     static {singleton=new Character();}
@@ -32,46 +41,114 @@ public class Character implements DrawableGlObject {
         return singleton;
     }
 
+
+
     private Character(){
         stateImageMap=new HashMap<>();
         currentState=State.IDLE;
+        xScale=1;
+        yScale=1;
     }
 
-    /* create enum state*/
+
+    /**
+     *  enum state use for determine character state and updating image for view
+     */
     public enum State{
         IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK ;
     }
 
-
+    /**
+     *  change location : use for update current location by deltaX and deltaY
+     *  new_x will be current_x+deltaX
+     *  new_y will be current_y+deltaY
+     *
+     * @param deltaX changing in x-axes
+     * @param deltaY changing in y-axes
+     * */
     public void changeLocation(double deltaX,double deltaY){
         x+=deltaX;
         y+=deltaY;
-        if(xState== Math.round(deltaX/Math.abs(deltaX)) && yState==Math.round(deltaY/Math.abs(deltaY)) )
+
+        // state for know if character change moving or still in same moving direction
+        double newXState=Math.round(deltaX/Math.abs(deltaX));
+        double newYState=Math.round(deltaY/Math.abs(deltaY));
+
+        if(xState==  newXState&& yState== newYState) {
             internalTime++;
-        else {
-            xState= Math.round(deltaX/Math.abs(deltaX));
-            yState= Math.round(deltaY/Math.abs(deltaY));
+        }else {
+            xState= newXState;
+            yState= newYState;
             internalTime=0;
         }
 
-        if(internalTime%10!=0) return;
-        xScale=1;yScale=1;
-        if(deltaX==0 && deltaY==0){
+        // update state every 1/6 seconds (frame rate is 60) : general  (FPS/10) change every second
+        if(internalTime%10==0) updateCurrentState();
+
+    }
+
+
+    /**
+     *  private method implement logic for changing character state
+     **/
+    private void updateCurrentState(){
+        // reset scale (flipping about axes) to default
+        xScale=1;
+        yScale=1;
+
+        // if xState 0 and yState 0 that mean is still stand
+        if(xState==0 && yState==0){
             if(currentState==State.IDLE)currentState=State.IDLE1;
             else if(currentState==State.IDLE1)currentState=State.IDLE2;
             else if(currentState==State.IDLE2)currentState=State.IDLE3;
             else currentState=State.IDLE;
-        }else if(deltaX!=0 && deltaY==0){
-            if(deltaX<0) xScale=-1;
+        }else if(xState!=0 && yState==0){  // if moving horizontal only
+
+            // if moving left flip images
+            if(xState<0) xScale=-1;
 
             if(currentState==State.WALK1) currentState=State.WALK2;
             else if(currentState==State.WALK2) currentState=State.WALK3;
             else if(currentState==State.WALK3) currentState=State.WALK4;
             else  currentState=State.WALK1;
+        }else if(xState==0 && yState!=0){ // if moving vertical only (up and down)
+
+        }else if(xState!=0 && yState!=0){ // moving in vertical and horizontal
+
         }
 
     }
 
+
+    /* draw implements from GLDrawableObject */
+    @Override
+    public void draw(GL gl) {
+        Image image; // image for current state
+        if(!stateImageMap.containsKey(currentState))
+            image=stateImageMap.get(State.IDLE);
+        else
+            image=stateImageMap.get(currentState);
+
+        gl.glPushMatrix();
+        gl.glTranslated(x,y,0); // update location for character
+
+        // update size for character if it set
+        if(height!=0)image.setHeight(height);
+        if(width!=0)image.setWidth(width);
+
+        // update scale for handling flipping about axis
+        image.setXScale(xScale);
+        image.setYScale(yScale);
+
+
+        image.draw(gl);
+        gl.glPopMatrix();
+    }
+
+
+    /*****************************************
+     *  Getter and setter methods
+     *****************************************/
     public void setSize(double height,double width){
         this.height=height;
         this.width=width;
@@ -84,7 +161,6 @@ public class Character implements DrawableGlObject {
     public void setHeight(double height) {
         this.height = height;
     }
-
     public void setWidth(double width) {
         this.width = width;
     }
@@ -92,35 +168,14 @@ public class Character implements DrawableGlObject {
     public double getX() {
         return x;
     }
-
     public double getY() {
         return y;
     }
-
     public double getHeight() {
         return height;
     }
-
     public double getWidth() {
         return width;
     }
 
-    @Override
-    public void draw(GL gl) {
-        Image image;
-        if(!stateImageMap.containsKey(currentState))
-            image=stateImageMap.get(State.IDLE);
-        else
-            image=stateImageMap.get(currentState);
-
-        gl.glPushMatrix();
-        gl.glTranslated(x,y,0);
-        if(height!=0)image.setHeight(height);
-        if(width!=0)image.setWidth(width);
-
-        image.setXScale(xScale);
-        image.setYScale(yScale);
-        image.draw(gl);
-        gl.glPopMatrix();
-    }
 }
