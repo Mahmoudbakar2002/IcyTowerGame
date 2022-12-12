@@ -17,6 +17,7 @@ public class GameEngine extends ListenerPanel {
     private long time;
     private Character player;
     private double deltaX,deltaY;
+    private double friction=1;
 
     public void resetGame(){
         player.setLocation(100,20);
@@ -35,7 +36,7 @@ public class GameEngine extends ListenerPanel {
 
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0, 600, 0, 600, -1.0, 1.0);
+        gl.glOrtho(0, 300, 0, 300, -1.0, 1.0);
 
         gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -47,7 +48,6 @@ public class GameEngine extends ListenerPanel {
         }
 
         player= Character.getCharacter(collection);
-
         resetGame();
     }
 
@@ -57,12 +57,23 @@ public class GameEngine extends ListenerPanel {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
         time++;
 
-        if(isKeyPressed(KeyEvent.VK_RIGHT)) deltaX=5;
+//        if(deltaX>0) deltaX= Math.max(0,deltaX-friction*deltaX);
+//        else if(deltaX<0) deltaX= Math.min(0,deltaX-friction*deltaX);
+        deltaX=0;
+//        deltaX=Math.floor(deltaX);
+//        deltaY=Math.round(deltaY);
+
+        if(isKeyPressed(KeyEvent.VK_RIGHT)) deltaX=1;
+        if(isKeyPressed(KeyEvent.VK_LEFT)) deltaX=-1;
 
         gl.glColor3f(1,1,1);
+        gl.glPushMatrix();
         player.draw(gl);
 
+        gl.glPopMatrix();
         player.changeLocation(deltaX,deltaY);
+
+//        System.out.println(deltaX+" "+deltaY+" " +time+" - " + (time%60));
 //        gl.glColor3f(0,0,0);
 
         gl.glBegin(GL.GL_LINES);

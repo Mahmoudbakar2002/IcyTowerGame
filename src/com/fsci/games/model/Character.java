@@ -19,6 +19,9 @@ public class Character implements DrawableGlObject {
     private State currentState;
     private Map<State, Image> stateImageMap;
 
+
+    private double xState,yState;
+    private long internalTime;
     /* singleton pattern */
     private static final Character singleton;
     static {singleton=new Character();}
@@ -34,19 +37,34 @@ public class Character implements DrawableGlObject {
 
     /* create enum state*/
     public enum State{
-        IDLE,IDLE1,IDLE2,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK ;
+        IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK ;
     }
 
 
     public void changeLocation(double deltaX,double deltaY){
         x+=deltaX;
         y+=deltaY;
+        if(xState== Math.round(deltaX/Math.abs(deltaX)) && yState==Math.round(deltaY/Math.abs(deltaY)) )
+            internalTime++;
+        else {
+            xState= Math.round(deltaX/Math.abs(deltaX));
+            yState= Math.round(deltaY/Math.abs(deltaY));
+            internalTime=0;
+        }
 
+        if(internalTime%10!=0) return;
         if(deltaX==0 && deltaY==0){
             if(currentState==State.IDLE)currentState=State.IDLE1;
             else if(currentState==State.IDLE1)currentState=State.IDLE2;
+            else if(currentState==State.IDLE2)currentState=State.IDLE3;
             else currentState=State.IDLE;
+        }else if(deltaX>0 && deltaY==0){
+            if(currentState==State.WALK1) currentState=State.WALK2;
+            else if(currentState==State.WALK2) currentState=State.WALK3;
+            else if(currentState==State.WALK3) currentState=State.WALK4;
+            else  currentState=State.WALK1;
         }
+
     }
 
     public void setSize(double height,double width){
@@ -56,6 +74,30 @@ public class Character implements DrawableGlObject {
     public void setLocation(double x,double y){
         this.x=x;
         this.y=y;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
     }
 
     @Override

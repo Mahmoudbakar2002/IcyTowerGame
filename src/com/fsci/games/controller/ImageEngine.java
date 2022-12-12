@@ -20,7 +20,9 @@ public class ImageEngine {
         String imageName=state.toString().toLowerCase() + ".png";
 
         try {
-            character.put(state,new Image( PATH_FOR_CHARACTER+"/"+name+"/"+ imageName));
+            Image img=new Image( PATH_FOR_CHARACTER+"/"+name+"/"+ imageName);
+            img.setUseSizeRatio(true);
+            character.put(state,img);
         } catch (IOException e) {
             // here we handle if the character state not found
             e.printStackTrace();
@@ -33,6 +35,7 @@ public class ImageEngine {
         addCharacterState(Character.State.IDLE,characterName);
         addCharacterState(Character.State.IDLE1,characterName);
         addCharacterState(Character.State.IDLE2,characterName);
+        addCharacterState(Character.State.IDLE3,characterName);
         addCharacterState(Character.State.CHOCK,characterName);
         addCharacterState(Character.State.WALK1,characterName);
         addCharacterState(Character.State.WALK2,characterName);
