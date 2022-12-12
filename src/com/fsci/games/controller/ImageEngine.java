@@ -21,7 +21,7 @@ public class ImageEngine {
 
         try {
             Image img=new Image( PATH_FOR_CHARACTER+"/"+name+"/"+ imageName);
-            img.setUseSizeRatio(true);
+            img.useSizeRatio(true);
             character.put(state,img);
         } catch (IOException e) {
             // here we handle if the character state not found

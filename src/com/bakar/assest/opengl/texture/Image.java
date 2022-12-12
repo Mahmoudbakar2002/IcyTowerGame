@@ -17,6 +17,7 @@ public class Image implements DrawableGlObject {
     private double rotationAngel;
     private double sizeRatio; // width/height
     private boolean useSizeRatio;
+    private int xScale=1,yScale=1;
 
     public Image(String source)throws IOException{
         this.sourceFile=source;
@@ -62,6 +63,7 @@ public class Image implements DrawableGlObject {
 
         gl.glTranslated((width/2.0)+x,(height/2.0)+y,0);
         gl.glRotated(rotationAngel,0,0,1);
+        gl.glScaled(xScale,yScale,1);
 //        gl.glTranslated((w/2.0),(h/2.0),0);
 
         gl.glBegin(GL.GL_QUADS);
@@ -141,7 +143,10 @@ public class Image implements DrawableGlObject {
         return useSizeRatio;
     }
 
-    public void setUseSizeRatio(boolean useSizeRatio) {
+    public void useSizeRatio(boolean useSizeRatio) {
         this.useSizeRatio = useSizeRatio;
     }
+
+    public void flipInX(){xScale*=-1;}
+    public void flipInY(){yScale*=-1;}
 }
