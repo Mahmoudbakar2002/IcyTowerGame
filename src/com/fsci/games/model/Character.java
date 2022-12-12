@@ -117,7 +117,7 @@ public class Character implements DrawableGlObject {
         gl.glTranslated(x,y,0);
         if(height!=0)image.setHeight(height);
         if(width!=0)image.setWidth(width);
-        System.out.println(xScale);
+
         image.setXScale(xScale);
         image.setYScale(yScale);
         image.draw(gl);
