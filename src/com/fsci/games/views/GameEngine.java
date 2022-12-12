@@ -11,6 +11,13 @@ import javax.media.opengl.glu.GLU;
 import java.awt.event.KeyEvent;
 import java.util.Map;
 
+/**
+ * Game Engine class it's main class use :
+ *              - as container for game objects
+ *              - draw game objects
+ *              - apply physics rules
+ *              - update when key pressed
+ */
 public class GameEngine extends ListenerPanel {
 
     private String characterChosen="harold";
