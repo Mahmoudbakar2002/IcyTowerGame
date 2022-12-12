@@ -16,6 +16,8 @@ import java.util.Map;
 public class Character implements DrawableGlObject {
     private double x,y;
     private double height,width;
+    private double xScale=1;
+    private double yScale=1;
     private State currentState;
     private Map<State, Image> stateImageMap;
 
@@ -53,12 +55,15 @@ public class Character implements DrawableGlObject {
         }
 
         if(internalTime%10!=0) return;
+        xScale=1;yScale=1;
         if(deltaX==0 && deltaY==0){
             if(currentState==State.IDLE)currentState=State.IDLE1;
             else if(currentState==State.IDLE1)currentState=State.IDLE2;
             else if(currentState==State.IDLE2)currentState=State.IDLE3;
             else currentState=State.IDLE;
-        }else if(deltaX>0 && deltaY==0){
+        }else if(deltaX!=0 && deltaY==0){
+            if(deltaX<0) xScale=-1;
+
             if(currentState==State.WALK1) currentState=State.WALK2;
             else if(currentState==State.WALK2) currentState=State.WALK3;
             else if(currentState==State.WALK3) currentState=State.WALK4;
@@ -112,6 +117,9 @@ public class Character implements DrawableGlObject {
         gl.glTranslated(x,y,0);
         if(height!=0)image.setHeight(height);
         if(width!=0)image.setWidth(width);
+        System.out.println(xScale);
+        image.setXScale(xScale);
+        image.setYScale(yScale);
         image.draw(gl);
         gl.glPopMatrix();
     }

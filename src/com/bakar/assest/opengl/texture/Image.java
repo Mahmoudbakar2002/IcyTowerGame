@@ -17,7 +17,7 @@ public class Image implements DrawableGlObject {
     private double rotationAngel;
     private double sizeRatio; // width/height
     private boolean useSizeRatio;
-    private int xScale=1,yScale=1;
+    private double xScale=1,yScale=1;
 
     public Image(String source)throws IOException{
         this.sourceFile=source;
@@ -149,4 +149,20 @@ public class Image implements DrawableGlObject {
 
     public void flipInX(){xScale*=-1;}
     public void flipInY(){yScale*=-1;}
+
+    public void setXScale(double xScale) {
+        this.xScale = xScale;
+    }
+
+    public void setYScale(double yScale) {
+        this.yScale = yScale;
+    }
+
+    public double getxScale() {
+        return xScale;
+    }
+
+    public double getyScale() {
+        return yScale;
+    }
 }
