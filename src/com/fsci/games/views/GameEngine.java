@@ -9,44 +9,48 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.Map;
 
 public class GameEngine extends ListenerPanel {
 
-    private long time;
+    private String characterChosen="harold";
     private Character player;
     private double deltaX,deltaY;
-    private double friction=1;
 
+    /* reset function to return game state to initial state */
     public void resetGame(){
         player.setLocation(100,20);
-        time=0;
         deltaX=0;
         deltaY=0;
     }
 
+    /* initial function to initialize gl canvas settings*/
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         GLU glu= new GLU();
-//        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        // set background color
         gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-
+        // initialize matrix for paint
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
         gl.glOrtho(0, 300, 0, 300, -1.0, 1.0);
 
-        gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
+
+        // enabling texture mapping
+        gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 
-        Map<Character.State, Image> collection = ImageEngine.loadCharacterImagesState("harold");
+        /* ---  load character images ----*/
+        Map<Character.State, Image> collection = ImageEngine.loadCharacterImagesState(characterChosen);
         for(Map.Entry entry: collection.entrySet()){
             ((Image)entry.getValue()).loadInGl(gl,glu);
         }
 
+        /* initialize player and passing character images collection*/
         player= Character.getCharacter(collection);
         resetGame();
     }
@@ -55,27 +59,26 @@ public class GameEngine extends ListenerPanel {
     public void display(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
-        time++;
 
-//        if(deltaX>0) deltaX= Math.max(0,deltaX-friction*deltaX);
-//        else if(deltaX<0) deltaX= Math.min(0,deltaX-friction*deltaX);
+        /*     physics for moving, gravity and velocity */
         deltaX=0;
-//        deltaX=Math.floor(deltaX);
-//        deltaY=Math.round(deltaY);
 
+
+
+
+        /* handle click pressed to do moving*/
         if(isKeyPressed(KeyEvent.VK_RIGHT)) deltaX=1;
         if(isKeyPressed(KeyEvent.VK_LEFT)) deltaX=-1;
 
+
+
+        /* update player location and draw it then */
         gl.glColor3f(1,1,1);
-        gl.glPushMatrix();
+        player.changeLocation(deltaX,deltaY);
         player.draw(gl);
 
-        gl.glPopMatrix();
-        player.changeLocation(deltaX,deltaY);
 
-//        System.out.println(deltaX+" "+deltaY+" " +time+" - " + (time%60));
-//        gl.glColor3f(0,0,0);
-
+        /* vertical line for test */
         gl.glBegin(GL.GL_LINES);
         gl.glVertex2i(0,20);
         gl.glVertex2i(600,20);
