@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class GameEngine extends ListenerPanel {
 
-    private String characterChosen="harold";
+    private String characterChosen="haroldv4";
     private Character player;
     private double deltaX,deltaY;
     /* reset function to return game state to initial state */
@@ -69,6 +69,7 @@ public class GameEngine extends ListenerPanel {
         /*     physics for moving, gravity and velocity */
         deltaX=0;
         /* handle click pressed to do moving*/
+
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
         player.changeLocation(deltaX,deltaY);
