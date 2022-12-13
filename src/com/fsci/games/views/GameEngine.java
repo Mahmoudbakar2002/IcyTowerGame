@@ -23,7 +23,6 @@ public class GameEngine extends ListenerPanel {
     private String characterChosen="harold";
     private Character player;
     private double deltaX,deltaY;
-
     /* reset function to return game state to initial state */
     public void resetGame(){
         player.setLocation(100,20);
@@ -43,7 +42,7 @@ public class GameEngine extends ListenerPanel {
         // initialize matrix for paint
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0, 300, 0, 300, -1.0, 1.0);
+        gl.glOrtho(0, 500, 0, 500, -1.0, 1.0);
 
 
         // enabling texture mapping
@@ -69,16 +68,7 @@ public class GameEngine extends ListenerPanel {
 
         /*     physics for moving, gravity and velocity */
         deltaX=0;
-
-
-
-
         /* handle click pressed to do moving*/
-        if(isKeyPressed(KeyEvent.VK_RIGHT)) deltaX=1;
-        if(isKeyPressed(KeyEvent.VK_LEFT)) deltaX=-1;
-
-
-
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
         player.changeLocation(deltaX,deltaY);

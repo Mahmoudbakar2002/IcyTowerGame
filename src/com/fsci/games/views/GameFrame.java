@@ -19,7 +19,7 @@ public class GameFrame extends JFrame {
     }
     public  void initialize(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(600, 600);
+        setSize(500, 500);
         //center the JFrame on the screen
         this.setLocationRelativeTo(null);
 
