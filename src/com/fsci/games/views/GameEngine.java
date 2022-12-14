@@ -32,11 +32,11 @@ public class GameEngine extends ListenerPanel {
         player.setLocation(100,20);
         deltaX=0;
         deltaY=0;
-        gravity=0.02;
-        fraction_factor=0.15;
-        accelration_factor=0.2;
-        projectile_theta =60;
-        uptime=0;
+        uptime =0;
+        fraction_factor = 0.05;
+        gravity = 0.02;
+        projectile_theta = 60;
+        accelration_factor = 0.1;
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -75,14 +75,13 @@ public class GameEngine extends ListenerPanel {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
-        /*     physics for moving, gravity and velocity and handling click pressed to do moving*/
-        //declaration
-            fraction();
-            gravity(player.getY());
-
-        //acceleration
-            acceleration();
-            jump();
+        /* physics for moving, gravity and velocity and handling click pressed to do moving*/
+        //deaccelrate
+        fraction();
+        gravity(player.getY());
+        // accelrate
+        accelerate();
+        jump();
 
 
         /* update player location and draw it then */
@@ -97,42 +96,40 @@ public class GameEngine extends ListenerPanel {
         gl.glVertex2i(600,20);
         gl.glEnd();
 
-        //jump time track
+        //jump time tracker
         uptime++;
     }
     private void gravity(double y){
         if(y>20)
             deltaY-=gravity*uptime;
-        else {
-            player.setLocation(player.getX(), 20); // lazy fix for collision till real fix
+        // if y <= one for floor's y
+        if(y<=20) {
             deltaY = 0;
+            //lazy fix till figure out collision formulas
+            player.setLocation(player.getX(), 20);
         }
     }
     private void fraction(){
-        if(!isKeyPressed(KeyEvent.VK_RIGHT)&&!isKeyPressed(KeyEvent.VK_LEFT)) {
-            if (deltaX > fraction_factor)
-                deltaX -= fraction_factor;
-            else if (deltaX < -fraction_factor)
-                deltaX += fraction_factor;
-            if (Math.abs(deltaX) < fraction_factor)
-                deltaX = 0;
-        }
+        if(deltaX>0)
+            deltaX-= fraction_factor;
+        else if(deltaX<0)
+            deltaX+= fraction_factor;
+        //lazy fix till figure out collision formulas
+        if(Math.abs(deltaX)< fraction_factor)
+            deltaX=0;
     }
-    private void acceleration(){
-        if (isKeyPressed(KeyEvent.VK_RIGHT)&&deltaX<5.0)
-            deltaX += accelration_factor;
-        if (isKeyPressed(KeyEvent.VK_LEFT)&&deltaX>-5.0)
-            deltaX -= accelration_factor;
+    private void accelerate(){
+        if (isKeyPressed(KeyEvent.VK_RIGHT)&&deltaX<5)
+            deltaX+= accelration_factor;
+        if (isKeyPressed(KeyEvent.VK_LEFT)&& deltaX>-5)
+            deltaX-= accelration_factor;
     }
     private void jump(){
         if (isKeyPressed(KeyEvent.VK_UP)) {
-            if(uptime>50) {
-                if(Math.abs(deltaX)>0) {
-                    deltaY+=Math.sqrt(25+(deltaX*deltaX))*Math.sin(Math.toRadians(projectile_theta));
-                    if(deltaX>0)
-                        deltaX+=Math.sqrt(25+(deltaX*deltaX))*Math.sin(Math.toRadians(90- projectile_theta));
-                    else
-                        deltaX-=Math.sqrt(25+(deltaX*deltaX))*Math.sin(Math.toRadians(90- projectile_theta));
+            if(uptime >50) {
+                if(deltaX!=0) {
+                    deltaY+=(Math.sqrt(16+Math.abs(deltaX)*Math.abs(deltaX)))*Math.sin(Math.toRadians(projectile_theta));
+                    deltaY+=(Math.sqrt(16+Math.abs(deltaX)*Math.abs(deltaX)))*Math.sin(Math.toRadians(90- projectile_theta));
                 }
                 else
                     deltaY+=4;
