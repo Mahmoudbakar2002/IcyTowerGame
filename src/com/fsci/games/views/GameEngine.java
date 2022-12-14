@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class GameEngine extends ListenerPanel {
 
-    private String characterChosen="haroldv4";
+    private final static String characterChosen="haroldv4";
     private Character player;
     private double deltaX,deltaY,fraction_factor,gravity,accelration_factor, projectile_theta;
     private int uptime ;
@@ -35,8 +35,8 @@ public class GameEngine extends ListenerPanel {
         uptime =0;
         fraction_factor = 0.05;
         gravity = 0.02;
-        projectile_theta = 60;
-        accelration_factor = 0.1;
+        projectile_theta = 70;
+        accelration_factor = 0.2;
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -75,15 +75,27 @@ public class GameEngine extends ListenerPanel {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
-        /* physics for moving, gravity and velocity and handling click pressed to do moving*/
-        //deaccelrate
-        fraction();
-        gravity(player.getY());
-        // accelrate
-        accelerate();
-        jump();
+        /* physics for moving, gravity and velocity */
+            //deaccelerate
+            fraction();
+            // if y <= one for floor's y
 
+            if(player.getY()>20)
+                gravity();
+            else{
+                deltaY = 0;
+                //@todo lazy fix till figure out collision formulas
+               player.setLocation(player.getX(), 20);
+            }
 
+            /* handling key pressed to do moving */
+            // accelerate
+            if (isKeyPressed(KeyEvent.VK_UP))
+                jump();
+            if(isKeyPressed(KeyEvent.VK_LEFT))
+                accelerate(0);
+            if(isKeyPressed(KeyEvent.VK_RIGHT))
+                accelerate(1);
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
         player.changeLocation(deltaX,deltaY);
@@ -99,45 +111,37 @@ public class GameEngine extends ListenerPanel {
         //jump time tracker
         uptime++;
     }
-    private void gravity(double y){
-        if(y>20)
-            deltaY-=gravity*uptime;
-        // if y <= one for floor's y
-        if(y<=20) {
-            deltaY = 0;
-            //lazy fix till figure out collision formulas
-            player.setLocation(player.getX(), 20);
-        }
+    private void gravity(){
+
+        deltaY-=gravity*uptime;
     }
     private void fraction(){
-        if(deltaX>0)
-            deltaX-= fraction_factor;
-        else if(deltaX<0)
-            deltaX+= fraction_factor;
-        //lazy fix till figure out collision formulas
-        if(Math.abs(deltaX)< fraction_factor)
-            deltaX=0;
+        if(deltaY==0) {
+            if (deltaX > 0)
+                deltaX -= fraction_factor;
+            else if (deltaX < 0)
+                deltaX += fraction_factor;
+            //@todo lazy fix till figure out collision formulas
+            if (Math.abs(deltaX) < fraction_factor)
+                deltaX = 0;
+        }
     }
-    private void accelerate(){
-        if (isKeyPressed(KeyEvent.VK_RIGHT)&&deltaX<5)
+    private void accelerate(int i){
+        if (i==1&&deltaX<5)
             deltaX+= accelration_factor;
-        if (isKeyPressed(KeyEvent.VK_LEFT)&& deltaX>-5)
+        if (i==0&& deltaX>-5)
             deltaX-= accelration_factor;
     }
     private void jump(){
-        if (isKeyPressed(KeyEvent.VK_UP)) {
-            if(uptime >50) {
-                if(deltaX!=0) {
-                    deltaY+=(Math.sqrt(16+Math.abs(deltaX)*Math.abs(deltaX)))*Math.sin(Math.toRadians(projectile_theta));
-                    deltaY+=(Math.sqrt(16+Math.abs(deltaX)*Math.abs(deltaX)))*Math.sin(Math.toRadians(90- projectile_theta));
-                }
-                else
-                    deltaY+=4;
-                uptime =0;
-            }
+        if(uptime >50) {
+            if (deltaX != 0) {
+                deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
+                deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
+            } else
+                deltaY += 5;
+            uptime = 0;
         }
     }
-
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
     }
