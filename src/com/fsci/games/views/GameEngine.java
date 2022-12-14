@@ -51,7 +51,7 @@ public class GameEngine extends ListenerPanel {
         // initialize matrix for paint
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0, 500, 0, 500, -1.0, 1.0);
+        gl.glOrtho(0, 600, 0, 600, -1.0, 1.0);
 
 
         // enabling texture mapping
@@ -79,7 +79,6 @@ public class GameEngine extends ListenerPanel {
             //deaccelerate
             fraction();
             // if y <= one for floor's y
-
             if(player.getY()>20)
                 gravity();
             else{
