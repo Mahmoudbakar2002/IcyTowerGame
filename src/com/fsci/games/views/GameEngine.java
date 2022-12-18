@@ -22,7 +22,7 @@ public class GameEngine extends ListenerPanel {
 
     private final static String characterChosen="haroldv4";
     private Character player;
-    private double deltaX,deltaY,fraction_factor,gravity,accelration_factor, projectile_theta;
+    private double nearst_floor,Wallpadding,deltaX,deltaY,fraction_factor,gravity,accelration_factor, projectile_theta,Max_speed;
     private int uptime ;
     public GameEngine() {
     }
@@ -37,6 +37,9 @@ public class GameEngine extends ListenerPanel {
         gravity = 0.02;
         projectile_theta = 70;
         accelration_factor = 0.2;
+        Max_speed = 20;
+        Wallpadding = 20;
+        nearst_floor = 20;
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -79,17 +82,17 @@ public class GameEngine extends ListenerPanel {
             //deaccelerate
             fraction();
             // if y <= one for floor's y
-            if(player.getY()>20)
+            if(player.getY()>nearst_floor)
                 gravity();
             else{
                 deltaY = 0;
                 //@todo lazy fix till figure out collision formulas
-               player.setLocation(player.getX(), 20);
+               player.setLocation(player.getX(), nearst_floor);
             }
 
             /* handling key pressed to do moving */
             // accelerate
-            if (isKeyPressed(KeyEvent.VK_UP))
+            if (isKeyPressed(KeyEvent.VK_UP)&&player.getY()==nearst_floor)
                 jump();
             if(isKeyPressed(KeyEvent.VK_LEFT))
                 accelerate(0);
@@ -110,8 +113,10 @@ public class GameEngine extends ListenerPanel {
         //jump time tracker
         uptime++;
     }
-    private void gravity(){
+    private void collision(){
 
+    }
+    private void gravity(){
         deltaY-=gravity*uptime;
     }
     private void fraction(){
@@ -126,9 +131,9 @@ public class GameEngine extends ListenerPanel {
         }
     }
     private void accelerate(int i){
-        if (i==1&&deltaX<5)
+        if (i==1&&deltaX<Max_speed)
             deltaX+= accelration_factor;
-        if (i==0&& deltaX>-5)
+        if (i==0&& deltaX>-Max_speed)
             deltaX-= accelration_factor;
     }
     private void jump(){
