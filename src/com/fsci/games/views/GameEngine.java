@@ -89,6 +89,13 @@ public class GameEngine extends ListenerPanel {
                 //@todo lazy fix till figure out collision formulas
                player.setLocation(player.getX(), nearst_floor);
             }
+            //600 <=> Max width
+            if(player.getX()>=600-Wallpadding){
+                h_collision(true);
+            }
+            else if(player.getX()<=Wallpadding){
+                h_collision(false);
+            }
 
             /* handling key pressed to do moving */
             // accelerate
@@ -113,8 +120,13 @@ public class GameEngine extends ListenerPanel {
         //jump time tracker
         uptime++;
     }
-    private void collision(){
-
+    private void h_collision(boolean b){
+        //v = v/sum of masses
+        if(b)
+            player.setLocation(579, player.getY());
+        else
+            player.setLocation(21, player.getY());
+        deltaX = -1.0*deltaX/2;
     }
     private void gravity(){
         deltaY-=gravity*uptime;
@@ -137,14 +149,12 @@ public class GameEngine extends ListenerPanel {
             deltaX-= accelration_factor;
     }
     private void jump(){
-        if(uptime >50) {
-            if (deltaX != 0) {
-                deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
-                deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
-            } else
-                deltaY += 5;
-            uptime = 0;
-        }
+        if (deltaX != 0) {
+            deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
+            deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
+        } else
+            deltaY += 6;
+        uptime = 0;
     }
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
