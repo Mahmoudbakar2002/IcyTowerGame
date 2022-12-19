@@ -20,6 +20,7 @@ public class GameFrame extends JFrame {
     public  void initialize(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 600);
+        setResizable(false);
         //center the JFrame on the screen
         this.setLocationRelativeTo(null);
 
@@ -29,9 +30,10 @@ public class GameFrame extends JFrame {
         GLCanvas gamePanel=new GLCanvas();
         gamePanel.addKeyListener(engine);
         gamePanel.addGLEventListener(engine);
+        this.addKeyListener(engine);
         this.add(gamePanel, BorderLayout.CENTER);
         // animator
-        fps =new FPSAnimator(gamePanel,60);
+        fps =new FPSAnimator(gamePanel,70);
         fps.start();
 
     }

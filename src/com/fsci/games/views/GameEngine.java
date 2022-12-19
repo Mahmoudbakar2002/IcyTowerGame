@@ -47,11 +47,11 @@ public class GameEngine extends ListenerPanel {
         deltaX=0;
         deltaY=0;
         uptime =0;
-        fraction_factor = 0.05;
+        fraction_factor = 0.09;
         gravity = 0.02;
         projectile_theta = 70;
         accelration_factor = 0.2;
-        Max_speed = 20;
+        Max_speed = 8;
         Wallpadding = 20;
         nearst_floor = 40;
     }
@@ -86,8 +86,8 @@ public class GameEngine extends ListenerPanel {
         player= Character.getCharacter(collection);
 
 
-        floorFactory=new FloorFactory(gl,glu,maxX,maxY);
-        floorFactory.setyGap(100);
+        floorFactory=new FloorFactory(gl,glu,maxX,maxY,100);
+//        floorFactory.setyGap(60);
 
 
         // load background image
@@ -107,12 +107,29 @@ public class GameEngine extends ListenerPanel {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
+        if(player.getY()>maxY/2){
+            if(maxY- player.getY()<=100)
+                scrollDy=10;
+            else
+                scrollDy=1;
+
+        }
+
         // draw background
         drawBg(gl);
 
         // draw and scroll
         floorFactory.scrollDown(scrollDy);
         floorFactory.drawFloors();
+        player.setLocation(player.getX(), player.getY()-scrollDy);
+
+        nearst_floor=floorFactory.getNearestFloor(player);
+        if(player.getY()<=0){
+            scrollDy=0;
+//            player.setLocation();
+            return;
+        }
+
 
         /* physics for moving, gravity and velocity */
             //deaccelerate
@@ -123,10 +140,10 @@ public class GameEngine extends ListenerPanel {
             else{
                 deltaY = 0;
                 //@todo lazy fix till figure out collision formulas
-               player.setLocation(player.getX(), nearst_floor);
+//               player.setLocation(player.getX(), nearst_floor);
             }
             //600 <=> Max width
-            if(player.getX()>=600-Wallpadding){
+            if(player.getX()>maxX- player.getWidth()-Wallpadding-29){//maxX-2*player.getWidth()-Wallpadding){
                 h_collision(true);
             }
             else if(player.getX()<=Wallpadding){
@@ -135,7 +152,7 @@ public class GameEngine extends ListenerPanel {
 
             /* handling key pressed to do moving */
             // accelerate
-            if (isKeyPressed(KeyEvent.VK_UP)&&player.getY()==nearst_floor)
+            if (isKeyPressed(KeyEvent.VK_SPACE)&&player.getY()==nearst_floor)
                 jump();
             if(isKeyPressed(KeyEvent.VK_LEFT))
                 accelerate(0);
@@ -144,6 +161,11 @@ public class GameEngine extends ListenerPanel {
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
         player.changeLocation(deltaX,deltaY);
+        System.out.println(nearst_floor);
+        if(player.getY()<=nearst_floor)
+            player.setLocation(player.getX(), nearst_floor);
+
+
         player.draw(gl);
 
 
@@ -155,13 +177,13 @@ public class GameEngine extends ListenerPanel {
     private void h_collision(boolean b){
         //v = v/sum of masses
         if(b)
-            player.setLocation(579, player.getY());
+            player.setLocation(maxX- player.getWidth()-Wallpadding-30 , player.getY());
         else
-            player.setLocation(21, player.getY());
-        deltaX = -1.0*deltaX/2;
+            player.setLocation(Wallpadding+1, player.getY());
+        deltaX = -1.0*deltaX;
     }
     private void gravity(){
-        deltaY-=gravity*uptime;
+        deltaY-= gravity*uptime;
     }
     private void fraction(){
         if(deltaY==0) {

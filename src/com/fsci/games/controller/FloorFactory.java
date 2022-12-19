@@ -1,6 +1,7 @@
 package com.fsci.games.controller;
 
 import com.bakar.assest.opengl.texture.Image;
+import com.fsci.games.model.Character;
 import com.fsci.games.model.Floor;
 import com.sun.opengl.util.j2d.TextRenderer;
 
@@ -14,17 +15,18 @@ public class FloorFactory {
     private String floors[]={"stone"};
     private Map<String, Floor> map;
     private Image numBoard;
-    private int yGap=100,maxHigh,maxWidth ,initialY=40,floorIndex=1;
+    private int yGap=60,maxHigh,maxWidth ,initialY=40,floorIndex=1;
     private TextRenderer textRenderer;
 
     private LinkedList<FloorData> floorData;
     private  GL gl;
 
 
-    public FloorFactory(GL gl, GLU glu,int maxWidth,int maxHigh){
+    public FloorFactory(GL gl, GLU glu,int maxWidth,int maxHigh,int yGap){
         this.maxHigh=maxHigh;
         this.maxWidth=maxWidth;
         this.gl=gl;
+        this.yGap=yGap;
 
 //        textRenderer=new TextRenderer(new Font("Courier New", Font.BOLD, 120));
 //        textRenderer.beginRendering(maxWidth, maxHigh);
@@ -94,6 +96,18 @@ public class FloorFactory {
 
     public void setNumBoard(Image numBoard) {
         this.numBoard = numBoard;
+    }
+
+
+    public int getNearestFloor(Character player){
+
+        int nearest= -1;
+        for (FloorData e:floorData){
+            if(e.y<= (player).getY() && player.getX()>=e.x &&player.getX()<=e.x+e.width)
+                nearest=e.y;
+        };
+
+        return nearest;
     }
 
     public int getyGap() {
