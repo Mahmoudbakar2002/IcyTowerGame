@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class FloorFactory {
-    private String floors[]={"stone"};
+    private String floors[]={"stone","ice","wood"};
     private Map<String, Floor> map;
     private Image numBoard;
     private int yGap=60,maxHigh,maxWidth ,initialY=40,floorIndex=1;
@@ -49,7 +49,11 @@ public class FloorFactory {
                 middle.loadInGl(gl,glu);
                 end.loadInGl(gl,glu);
 
-                Floor floor =new Floor(start,middle,end);
+                /** solving flip image by rotate and change direction*/
+                start.setRotationAngel(180);
+                middle.setRotationAngel(180);
+                end.setRotationAngel(180);
+                Floor floor =new Floor(end,middle,start);
                 map.put(floorStr,floor);
             }
         }catch (IOException exception){
@@ -80,8 +84,12 @@ public class FloorFactory {
 
     private void createFloor(){
         Random ran=new Random();
-        int w=ran.nextInt(200)+100;
+        int w=ran.nextInt(200)+200;
         int x=ran.nextInt(maxWidth-w);
+        if(floorIndex%50==0) {
+            w = maxWidth;
+            x=0;
+        }
         int y=floorData.getLast().y+yGap;
         floorData.add( new FloorData(x,y,w,floors[getFloorIndex(floorIndex++)]));
     }
