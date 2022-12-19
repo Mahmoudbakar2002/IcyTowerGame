@@ -2,6 +2,7 @@ package com.fsci.games.views;
 
 import com.bakar.assest.opengl.ListenerPanel;
 import com.bakar.assest.opengl.texture.Image;
+import com.fsci.games.controller.FloorFactory;
 import com.fsci.games.controller.ImageEngine;
 import com.fsci.games.model.Character;
 
@@ -36,10 +37,13 @@ public class GameEngine extends ListenerPanel {
     private Image bgImage;
     private int bgLocation,repeatBG,scrollDy;
 
+    // ----
+    private FloorFactory floorFactory;
+
 
     /* reset function to return game state to initial state */
     public void resetGame(){
-        player.setLocation(100,20);
+        player.setLocation(100,40);
         deltaX=0;
         deltaY=0;
         uptime =0;
@@ -49,7 +53,7 @@ public class GameEngine extends ListenerPanel {
         accelration_factor = 0.2;
         Max_speed = 20;
         Wallpadding = 20;
-        nearst_floor = 20;
+        nearst_floor = 40;
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -82,6 +86,9 @@ public class GameEngine extends ListenerPanel {
         player= Character.getCharacter(collection);
 
 
+        floorFactory=new FloorFactory(gl,glu,maxX,maxY);
+        floorFactory.setyGap(100);
+
 
         // load background image
         try {
@@ -102,6 +109,10 @@ public class GameEngine extends ListenerPanel {
 
         // draw background
         drawBg(gl);
+
+        // draw and scroll
+        floorFactory.scrollDown(scrollDy);
+        floorFactory.drawFloors();
 
         /* physics for moving, gravity and velocity */
             //deaccelerate
@@ -136,11 +147,7 @@ public class GameEngine extends ListenerPanel {
         player.draw(gl);
 
 
-        /* vertical line for test */
-        gl.glBegin(GL.GL_LINES);
-        gl.glVertex2i(0,20);
-        gl.glVertex2i(600,20);
-        gl.glEnd();
+
 
         //jump time tracker
         uptime++;
