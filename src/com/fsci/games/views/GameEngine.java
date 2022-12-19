@@ -9,6 +9,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -20,12 +21,21 @@ import java.util.Map;
  */
 public class GameEngine extends ListenerPanel {
 
+    /**  Properties for scene*/
+    private static final int maxX=600,
+            minX=0,
+            maxY=600,
+            minY=0;
+
     private final static String characterChosen="haroldv4";
     private Character player;
     private double nearst_floor,Wallpadding,deltaX,deltaY,fraction_factor,gravity,accelration_factor, projectile_theta,Max_speed;
     private int uptime ;
-    public GameEngine() {
-    }
+
+    // data for background
+    private Image bgImage;
+    private int bgLocation,repeatBG,scrollDy;
+
 
     /* reset function to return game state to initial state */
     public void resetGame(){
@@ -54,7 +64,7 @@ public class GameEngine extends ListenerPanel {
         // initialize matrix for paint
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrtho(0, 600, 0, 600, -1.0, 1.0);
+        gl.glOrtho(minX,maxX,minY,maxY, -1.0, 1.0);
 
 
         // enabling texture mapping
@@ -70,6 +80,18 @@ public class GameEngine extends ListenerPanel {
 
         /* initialize player and passing character images collection*/
         player= Character.getCharacter(collection);
+
+
+
+        // load background image
+        try {
+            bgImage=new Image("assets/bg2.png");
+            bgImage.loadInGl(gl,glu);
+            repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
+        }catch (IOException ex){
+            System.out.println("Error in load Background :" + ex.getMessage() );
+        }
+
         resetGame();
     }
 
@@ -77,6 +99,9 @@ public class GameEngine extends ListenerPanel {
     public void display(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
+
+        // draw background
+        drawBg(gl);
 
         /* physics for moving, gravity and velocity */
             //deaccelerate
@@ -156,6 +181,18 @@ public class GameEngine extends ListenerPanel {
             deltaY += 6;
         uptime = 0;
     }
+
+
+    private void drawBg(GL gl){
+        bgLocation+=scrollDy;
+        bgLocation%=bgImage.getHeight();
+        for (int i=0,bgStart=-bgLocation;i<=repeatBG;i++) {
+            bgImage.setY(bgStart);
+            bgImage.draw(gl);
+            bgStart+=bgImage.getHeight();
+        }
+    }
+
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
     }
