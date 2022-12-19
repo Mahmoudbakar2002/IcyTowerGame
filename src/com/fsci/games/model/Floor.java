@@ -37,15 +37,15 @@ public class Floor implements DrawableGlObject {
         gl.glScaled(1, -1, 1);
 
 
-        start.setX(x);
+        start.setX(0);
         start.draw(gl);
-        double x = start.getWidth();
 
-        for (; x <width- end.getWidth();) {
-            middle.setX(x);
+        for ( double inX = start.getWidth(); inX <width- end.getWidth();) {
+            middle.setX(inX);
             middle.draw(gl);
-            x += middle.getWidth();
+            inX += middle.getWidth();
         }
+
         end.setX(width- end.getWidth());
         end.draw(gl);
         gl.glPopMatrix();
