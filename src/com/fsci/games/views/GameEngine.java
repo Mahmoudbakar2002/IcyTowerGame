@@ -108,11 +108,10 @@ public class GameEngine extends ListenerPanel {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
         if(player.getY()>maxY/2){
-            if(maxY- player.getY()<=100)
-                scrollDy=10;
+            if(maxY- player.getY()<=200)
+                scrollDy=5;
             else
                 scrollDy=1;
-
         }
 
         // draw background
@@ -122,42 +121,44 @@ public class GameEngine extends ListenerPanel {
         floorFactory.scrollDown(scrollDy);
         floorFactory.drawFloors();
         player.setLocation(player.getX(), player.getY()-scrollDy);
-
         nearst_floor=floorFactory.getNearestFloor(player);
+
+        //gameover
         if(player.getY()<=0){
             scrollDy=0;
-//            player.setLocation();
             return;
         }
 
-
         /* physics for moving, gravity and velocity */
-            //deaccelerate
-            fraction();
-            // if y <= one for floor's y
-            if(player.getY()>nearst_floor)
-                gravity();
-            else{
-                deltaY = 0;
-                //@todo lazy fix till figure out collision formulas
-//               player.setLocation(player.getX(), nearst_floor);
-            }
-            //600 <=> Max width
-            if(player.getX()>maxX- player.getWidth()-Wallpadding-29){//maxX-2*player.getWidth()-Wallpadding){
-                h_collision(true);
-            }
-            else if(player.getX()<=Wallpadding){
-                h_collision(false);
-            }
 
-            /* handling key pressed to do moving */
-            // accelerate
-            if (isKeyPressed(KeyEvent.VK_SPACE)&&player.getY()==nearst_floor)
-                jump();
-            if(isKeyPressed(KeyEvent.VK_LEFT))
-                accelerate(0);
-            if(isKeyPressed(KeyEvent.VK_RIGHT))
-                accelerate(1);
+
+        //deaccelerate
+        fraction();
+        // if y <= one for floor's y
+        if(player.getY()>nearst_floor)
+            gravity();
+        else
+            deltaY = 0;
+        if(player.getY()==nearst_floor)
+            uptime=0;
+        //600 <=> Max width
+        if(player.getX()>maxX- player.getWidth()-Wallpadding-29){//maxX-2*player.getWidth()-Wallpadding){
+            h_collision(true);
+        }
+        else if(player.getX()<=Wallpadding){
+            h_collision(false);
+        }
+
+        /* handling key pressed to do moving */
+        // accelerate
+        if (isKeyPressed(KeyEvent.VK_SPACE)&&player.getY()==nearst_floor)
+            jump();
+        if(isKeyPressed(KeyEvent.VK_LEFT))
+            accelerate(0);
+        if(isKeyPressed(KeyEvent.VK_RIGHT))
+            accelerate(1);
+
+
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
         player.changeLocation(deltaX,deltaY);
@@ -165,17 +166,13 @@ public class GameEngine extends ListenerPanel {
         if(player.getY()<=nearst_floor)
             player.setLocation(player.getX(), nearst_floor);
 
-
         player.draw(gl);
-
-
-
 
         //jump time tracker
         uptime++;
     }
     private void h_collision(boolean b){
-        //v = v/sum of masses
+        //v = v/(sum of masses)
         if(b)
             player.setLocation(maxX- player.getWidth()-Wallpadding-30 , player.getY());
         else
@@ -204,10 +201,10 @@ public class GameEngine extends ListenerPanel {
     }
     private void jump(){
         if (deltaX != 0) {
-            deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
-            deltaY += (Math.sqrt(36 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
+            deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
+            deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
         } else
-            deltaY += 6;
+            deltaY += 7;
         uptime = 0;
     }
 
