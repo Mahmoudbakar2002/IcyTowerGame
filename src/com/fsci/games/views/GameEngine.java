@@ -92,7 +92,7 @@ public class GameEngine extends ListenerPanel {
 
         // load background image
         try {
-            bgImage=new Image("assets/bg2.png");
+            bgImage=new Image("assets/bg.png");
             bgImage.loadInGl(gl,glu);
             repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
         }catch (IOException ex){
