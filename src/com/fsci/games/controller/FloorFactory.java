@@ -111,10 +111,9 @@ public class FloorFactory {
 
         int nearest= -1;
         for (FloorData e:floorData){
-            if(e.y<= (player).getY() && player.getX()>=e.x &&player.getX()<=e.x+e.width)
+            if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-10)
                 nearest=e.y;
         };
-
         return nearest;
     }
 
