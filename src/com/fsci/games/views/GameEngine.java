@@ -41,7 +41,7 @@ public class GameEngine extends ListenerPanel {
     // ----
     private FloorFactory floorFactory;
 
-    private Music m;
+    private Music m,menusound;
 
     /* reset function to return game state to initial state */
     public void resetGame(){
@@ -68,7 +68,8 @@ public class GameEngine extends ListenerPanel {
         gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         try {
-            m = new Music("src/assets/icy_tower.wav");
+            m = new Music("src/assets/icy_tower_ingame.wav");
+            menusound = new Music("src/assets/icy_tower.wav");
         }
         catch (Exception e) {
             e.printStackTrace(System.out);
@@ -122,6 +123,7 @@ public class GameEngine extends ListenerPanel {
         floorFactory.drawFloors();
         player.setLocation(player.getX(), player.getY()-scrollDy);
         physics.updateNearestFloor(floorFactory.getNearestFloor(player));
+        floorFactory.isOnEdge(player);
 
         //gameover
         if(player.getY()<=0){
