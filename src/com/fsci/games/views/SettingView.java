@@ -14,7 +14,7 @@ public class SettingView extends  AbstractGameView {
     public SettingView(Runnable backToMenu){
         this.backToMenu=backToMenu;
 
-
+        init();
     }
 
 
