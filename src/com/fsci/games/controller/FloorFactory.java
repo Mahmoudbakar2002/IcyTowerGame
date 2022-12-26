@@ -116,7 +116,9 @@ public class FloorFactory {
         };
         return nearest;
     }
-
+    public int getFloorIndex() {
+        return floorIndex;
+    }
     public int getyGap() {
         return yGap;
     }
