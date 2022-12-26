@@ -5,6 +5,7 @@ import com.bakar.assest.opengl.texture.Image;
 import com.fsci.games.controller.FloorFactory;
 import com.fsci.games.controller.ImageEngine;
 import com.fsci.games.controller.Music;
+import com.fsci.games.controller.PhysicsScene;
 import com.fsci.games.model.Character;
 
 import javax.media.opengl.GL;
@@ -33,9 +34,7 @@ public class GameEngine extends ListenerPanel {
 
     private final static String characterChosen="haroldv4";
     private Character player;
-    private double nearst_floor,Wallpadding,deltaX,deltaY,fraction_factor,gravity,accelration_factor, projectile_theta,Max_speed;
-    private int uptime ;
-
+    private PhysicsScene physics;
     // data for background
     private Image bgImage;
     private int bgLocation,repeatBG,scrollDy;
@@ -47,16 +46,7 @@ public class GameEngine extends ListenerPanel {
     /* reset function to return game state to initial state */
     public void resetGame(){
         player.setLocation(100,40);
-        deltaX=0;
-        deltaY=0;
-        uptime =0;
-        fraction_factor = 0.09;
-        gravity = 0.018;
-        projectile_theta = 70;
-        accelration_factor = 0.2;
-        Max_speed = 8;
-        Wallpadding = 20;
-        nearst_floor = 40;
+        physics.resetVariables();
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -92,10 +82,9 @@ public class GameEngine extends ListenerPanel {
 
         /* initialize player and passing character images collection*/
         player= Character.getCharacter(collection);
-
+        physics=new PhysicsScene(player,minX,maxX,minY,maxY);
 
         floorFactory=new FloorFactory(gl,glu,maxX,maxY,100);
-//        floorFactory.setyGap(60);
 
 
         // load background image
@@ -108,6 +97,8 @@ public class GameEngine extends ListenerPanel {
         }
 
         resetGame();
+        //play music
+//        m.play();
     }
 
     @Override
@@ -115,10 +106,10 @@ public class GameEngine extends ListenerPanel {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
-        if(player.getY()>maxY/2){
-            if(Math.abs(maxY/2 - player.getY())>=50)
+        if(player.getY()>maxY/2.0){
+            if(Math.abs(maxY/2.0 - player.getY())>=50)
                 scrollDy=5;
-            else if(Math.abs(maxY/2 - player.getY())>=100)
+            else if(Math.abs(maxY/2.0 - player.getY())>=100)
                 scrollDy=10;
             else
                 scrollDy=floorFactory.getFloorIndex()/50+1;
@@ -130,7 +121,7 @@ public class GameEngine extends ListenerPanel {
         floorFactory.scrollDown(scrollDy);
         floorFactory.drawFloors();
         player.setLocation(player.getX(), player.getY()-scrollDy);
-        nearst_floor=floorFactory.getNearestFloor(player);
+        physics.updateNearestFloor(floorFactory.getNearestFloor(player));
 
         //gameover
         if(player.getY()<=0){
@@ -139,83 +130,22 @@ public class GameEngine extends ListenerPanel {
             return;
         }
 
-        /* physics for moving, gravity and velocity */
-        //deaccelerate
-        fraction();
-        // if y <= one for floor's y
-        if(player.getY()>nearst_floor)
-            gravity();
-        else
-            deltaY = 0;
-        if(player.getY()==nearst_floor)
-            uptime=0;
-        //600 <=> Max width
-        if(player.getX()>maxX- player.getWidth()-Wallpadding-29){//maxX-2*player.getWidth()-Wallpadding){
-            h_collision(true);
-        }
-        else if(player.getX()<=Wallpadding){
-            h_collision(false);
-        }
+        physics.updateKeyState(
+                isKeyPressed(KeyEvent.VK_SPACE),
+                isKeyPressed(KeyEvent.VK_RIGHT),
+                isKeyPressed(KeyEvent.VK_LEFT)
+        );
 
-        /* handling key pressed to do moving */
-        // accelerate
-        if (isKeyPressed(KeyEvent.VK_SPACE)&&player.getY()==nearst_floor)
-            jump();
-        if(isKeyPressed(KeyEvent.VK_LEFT))
-            accelerate(0);
-        if(isKeyPressed(KeyEvent.VK_RIGHT))
-            accelerate(1);
-
+        physics.updatePhysicsScene();
 
         /* update player location and draw it then */
         gl.glColor3f(1,1,1);
-        player.changeLocation(deltaX,deltaY);
-        System.out.println(nearst_floor);
-        if(player.getY()<=nearst_floor)
-            player.setLocation(player.getX(), nearst_floor);
+        player.changeLocation(physics.getDeltaX(), physics.getDeltaY());
+
+        if(player.getY()<= physics.getNearst_floor())
+            player.setLocation(player.getX(), physics.getNearst_floor());
 
         player.draw(gl);
-
-        //jump time tracker
-        uptime++;
-        //play music
-        m.play();
-    }
-    private void h_collision(boolean b){
-        //v = v/(sum of masses)
-        if(b)
-            player.setLocation(maxX- player.getWidth()-Wallpadding-30 , player.getY());
-        else
-            player.setLocation(Wallpadding+1, player.getY());
-        deltaX = -1.0*deltaX;
-    }
-    private void gravity(){
-        deltaY-= gravity*uptime;
-    }
-    private void fraction(){
-        if(deltaY==0) {
-            if (deltaX > 0)
-                deltaX -= fraction_factor;
-            else if (deltaX < 0)
-                deltaX += fraction_factor;
-            //@todo lazy fix till figure out collision formulas
-            if (Math.abs(deltaX) < fraction_factor)
-                deltaX = 0;
-        }
-    }
-    private void accelerate(int i){
-        if (i==1&&deltaX<Max_speed)
-            deltaX+= accelration_factor;
-        if (i==0&& deltaX>-Max_speed)
-            deltaX-= accelration_factor;
-    }
-    private void jump(){
-        if (deltaX != 0) {
-            deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
-            deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
-        } else
-            deltaY += 7;
-        uptime = 0;
     }
 
 
