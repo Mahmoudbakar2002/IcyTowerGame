@@ -18,6 +18,8 @@ public class GameFrame extends JFrame {
 
 
     private MainMenu mainMenu;
+    private HowView howView;
+    private SettingView settingView;
 
     private void changeView(int idx){
         if(idx>cardsLength||idx<0)return;
@@ -63,8 +65,16 @@ public class GameFrame extends JFrame {
         mainMenu=new MainMenu(this::changeView);
         mainMenu.setSize(getWidth(),getHeight());
 
+        howView=new HowView(()->changeView(0));
+        howView.setSize(getWidth(),getHeight());
+
+        settingView=new SettingView(()->changeView(0));
+        settingView.setSize(getWidth(),getHeight());
+
         addView(mainMenu);
         addView(gamePanel);
+        addView(settingView);
+        addView(howView);
 
         changeView(0);
 
