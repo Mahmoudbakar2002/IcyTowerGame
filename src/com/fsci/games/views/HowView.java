@@ -23,9 +23,4 @@ public class HowView extends AbstractGameView{
         returnMenu.run();
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {}
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
 }
