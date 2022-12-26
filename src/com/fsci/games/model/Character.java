@@ -11,7 +11,7 @@ import java.util.Map;
  * Class Character is model for character in game store location and size and state
  *  class use singleton design pattern
  *
- * author : mahmoud atef (bakar)
+ * author : mahmoud atef (bakar),Mohamed atef (k3br) :"
  * */
 public class Character implements DrawableGlObject {
 
@@ -32,7 +32,7 @@ public class Character implements DrawableGlObject {
     */
     private double xState,yState;
     private long internalTime;
-
+    private boolean onleftEdge =false,onrightEdge=false;
     /* singleton pattern */
     private static final Character singleton;
     static {singleton=new Character();}
@@ -55,7 +55,7 @@ public class Character implements DrawableGlObject {
      *  enum state use for determine character state and updating image for view
      */
     public enum State{
-        IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK ;
+        IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK,EDGE1,EDGE2 ;
     }
 
     /**
@@ -96,7 +96,12 @@ public class Character implements DrawableGlObject {
         yScale=1;
 
         // if xState 0 and yState 0 that mean is still stand
-        if(xState==0 && yState==0){
+        if(xState==0 && yState==0&&(onleftEdge||onrightEdge)){
+            if(onrightEdge) xScale=-1;
+            if(currentState==State.EDGE1)currentState=State.EDGE2;
+            else currentState=State.EDGE1;
+        }
+        else if(xState==0 && yState==0){
             if(currentState==State.IDLE)currentState=State.IDLE1;
             else if(currentState==State.IDLE1)currentState=State.IDLE2;
             else if(currentState==State.IDLE2)currentState=State.IDLE3;
@@ -165,7 +170,10 @@ public class Character implements DrawableGlObject {
         this.x=x;
         this.y=y;
     }
-
+    public void setOnEdge(boolean onrightEdge,boolean onleftEdge) {
+        this.onrightEdge = onrightEdge;
+        this.onleftEdge = onleftEdge;
+    }
     public void setHeight(double height) {
         this.height = height;
     }
