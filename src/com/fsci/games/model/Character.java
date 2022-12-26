@@ -20,6 +20,7 @@ public class Character implements DrawableGlObject {
     private double height,width;
     private double xScale;
     private double yScale;
+    private double tempy;
     private State currentState;
     private Map<State, Image> stateImageMap;
 
@@ -67,9 +68,9 @@ public class Character implements DrawableGlObject {
      * @param deltaY changing in y-axes
      * */
     public void changeLocation(double deltaX,double deltaY){
+        tempy=y;
         x+=deltaX;
         y+=deltaY;
-
         // state for know if character change moving or still in same moving direction
         double newXState=Math.round(deltaX/Math.abs(deltaX));
         double newYState=Math.round(deltaY/Math.abs(deltaY));
@@ -112,9 +113,18 @@ public class Character implements DrawableGlObject {
             else if(currentState==State.WALK3) currentState=State.WALK4;
             else  currentState=State.WALK1;
         }else if(xState==0 && yState!=0){ // if moving vertical only (up and down)
-
+                currentState = State.JUMP;
         }else if(xState!=0 && yState!=0){ // moving in vertical and horizontal
 
+            // if moving left flip images
+            if(xState<0) xScale=-1;
+
+            if( y<tempy){
+                currentState = State.JUMP3;
+            }
+            else{
+                currentState = State.JUMP1;
+            }
         }
 
     }
