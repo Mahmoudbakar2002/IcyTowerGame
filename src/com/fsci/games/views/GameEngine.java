@@ -27,9 +27,9 @@ import java.util.Map;
 public class GameEngine extends ListenerPanel {
 
     /**  Properties for scene*/
-    private static final int maxX=600,
+    private static final int maxX=700,
             minX=0,
-            maxY=600,
+            maxY=700,
             minY=0;
 
     private final static String characterChosen="haroldv4";
