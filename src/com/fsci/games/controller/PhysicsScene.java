@@ -47,6 +47,7 @@ public class PhysicsScene {
     public void updatePhysicsScene(){
         /* physics for moving, gravity and velocity */
         //deaccelerate
+        if(uptime!=0)
         fraction();
         // if y <= one for floor's y
         if(player.getY()>nearst_floor)
@@ -104,7 +105,6 @@ public class PhysicsScene {
                 deltaX -= fraction_factor;
             else if (deltaX < 0)
                 deltaX += fraction_factor;
-            //@todo lazy fix till figure out collision formulas
             if (Math.abs(deltaX) < fraction_factor)
                 deltaX = 0;
         }
