@@ -18,10 +18,13 @@ public class Music {
         clip.open(audioInputStream);
     }
     public  void play(){
-        clip.start();
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void stop(){
         clip.stop();
+    }
+    public void once(){
+        clip.setMicrosecondPosition(0);
+        clip.start();
     }
 }
