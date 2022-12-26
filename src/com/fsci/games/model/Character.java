@@ -83,8 +83,7 @@ public class Character implements DrawableGlObject {
 
         // update state every 1/6 seconds (frame rate is 60) : general  (FPS/10) change every second
         if(internalTime%10==0) updateCurrentState();
-        else if(internalTime%2==0 && (currentState==State.ROTATE||currentState==State.ROTATE1||currentState==State.ROTATE2||currentState==State.ROTATE3||currentState==State.ROTATE4||currentState==State.ROTATE5||currentState==State.ROTATE6))
-            updateCurrentState();
+        if(internalTime%4==0&& (rotateState>=12|| (yState!=0 && (currentState==State.ROTATE||currentState==State.ROTATE1||currentState==State.ROTATE2||currentState==State.ROTATE3||currentState==State.ROTATE4||currentState==State.ROTATE5||currentState==State.ROTATE6)))) updateCurrentState();
     }
 
 
@@ -96,7 +95,7 @@ public class Character implements DrawableGlObject {
         xScale=1;
         yScale=1;
         //high jump
-        if(rotateState>=12){
+        if(rotateState>=12|| (yState!=0 && (currentState==State.ROTATE||currentState==State.ROTATE1||currentState==State.ROTATE2||currentState==State.ROTATE3||currentState==State.ROTATE4||currentState==State.ROTATE5||currentState==State.ROTATE6))){
             if(currentState==State.ROTATE)currentState=State.ROTATE1;
             else if(currentState==State.ROTATE1)currentState=State.ROTATE2;
             else if(currentState==State.ROTATE2)currentState=State.ROTATE3;
