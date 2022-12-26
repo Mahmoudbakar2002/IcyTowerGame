@@ -30,7 +30,7 @@ public class Character implements DrawableGlObject {
     *  if state equal 1 is moving positive moving
     *  if state equal -1 is moving negative moving
     */
-    private double xState,yState;
+    private double xState,yState,rotateState;
     private long internalTime;
     private boolean onleftEdge =false,onrightEdge=false;
     /* singleton pattern */
@@ -55,7 +55,7 @@ public class Character implements DrawableGlObject {
      *  enum state use for determine character state and updating image for view
      */
     public enum State{
-        IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK,EDGE1,EDGE2 ;
+        IDLE,IDLE1,IDLE2,IDLE3,WALK1,WALK2,WALK3,WALK4,JUMP,JUMP1,JUMP2,JUMP3,CHOCK,EDGE1,EDGE2,ROTATE,ROTATE1,ROTATE2,ROTATE3,ROTATE4,ROTATE5,ROTATE6,ROTATE7;
     }
 
     /**
@@ -72,7 +72,7 @@ public class Character implements DrawableGlObject {
         // state for know if character change moving or still in same moving direction
         double newXState=Math.round(deltaX/Math.abs(deltaX));
         double newYState=Math.round(deltaY/Math.abs(deltaY));
-
+        rotateState=deltaY;
         if(xState==  newXState&& yState== newYState) {
             internalTime++;
         }else {
@@ -83,7 +83,8 @@ public class Character implements DrawableGlObject {
 
         // update state every 1/6 seconds (frame rate is 60) : general  (FPS/10) change every second
         if(internalTime%10==0) updateCurrentState();
-
+        else if(internalTime%2==0 && (currentState==State.ROTATE||currentState==State.ROTATE1||currentState==State.ROTATE2||currentState==State.ROTATE3||currentState==State.ROTATE4||currentState==State.ROTATE5||currentState==State.ROTATE6))
+            updateCurrentState();
     }
 
 
@@ -94,9 +95,19 @@ public class Character implements DrawableGlObject {
         // reset scale (flipping about axes) to default
         xScale=1;
         yScale=1;
-
+        //high jump
+        if(rotateState>=12){
+            if(currentState==State.ROTATE)currentState=State.ROTATE1;
+            else if(currentState==State.ROTATE1)currentState=State.ROTATE2;
+            else if(currentState==State.ROTATE2)currentState=State.ROTATE3;
+            else if(currentState==State.ROTATE3)currentState=State.ROTATE4;
+            else if(currentState==State.ROTATE4)currentState=State.ROTATE5;
+            else if(currentState==State.ROTATE5)currentState=State.ROTATE6;
+            else if(currentState==State.ROTATE6)currentState=State.ROTATE7;
+            else currentState=State.ROTATE;
+        }
         // if xState 0 and yState 0 that mean is still stand
-        if(xState==0 && yState==0&&(onleftEdge||onrightEdge)){
+        else if(xState==0 && yState==0&&(onleftEdge||onrightEdge)){
             if(onrightEdge) xScale=-1;
             if(currentState==State.EDGE1)currentState=State.EDGE2;
             else currentState=State.EDGE1;
