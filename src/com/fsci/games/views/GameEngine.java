@@ -4,11 +4,14 @@ import com.bakar.assest.opengl.ListenerPanel;
 import com.bakar.assest.opengl.texture.Image;
 import com.fsci.games.controller.FloorFactory;
 import com.fsci.games.controller.ImageEngine;
+import com.fsci.games.controller.Music;
 import com.fsci.games.model.Character;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
@@ -36,10 +39,10 @@ public class GameEngine extends ListenerPanel {
     // data for background
     private Image bgImage;
     private int bgLocation,repeatBG,scrollDy;
-
     // ----
     private FloorFactory floorFactory;
 
+    private Music m;
 
     /* reset function to return game state to initial state */
     public void resetGame(){
@@ -74,7 +77,12 @@ public class GameEngine extends ListenerPanel {
         // enabling texture mapping
         gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
+        try {
+            m = new Music("src/assets/icy_tower.wav");
+        }
+        catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
 
         /* ---  load character images ----*/
         Map<Character.State, Image> collection = ImageEngine.loadCharacterImagesState(characterChosen);
@@ -127,6 +135,7 @@ public class GameEngine extends ListenerPanel {
         //gameover
         if(player.getY()<=0){
             scrollDy=0;
+            m.stop();
             return;
         }
 
@@ -169,6 +178,8 @@ public class GameEngine extends ListenerPanel {
 
         //jump time tracker
         uptime++;
+        //play music
+        m.play();
     }
     private void h_collision(boolean b){
         //v = v/(sum of masses)
