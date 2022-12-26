@@ -10,7 +10,7 @@ public class HowView extends JPanel implements KeyListener{
     private JLabel bg;
     private Image bgImage;
 
-    Runnable  returnMenu;
+    private Runnable  returnMenu;
     public HowView(Runnable returnMenu){
         this.returnMenu=returnMenu;
 
