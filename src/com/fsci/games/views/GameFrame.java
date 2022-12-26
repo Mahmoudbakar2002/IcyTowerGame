@@ -20,15 +20,21 @@ public class GameFrame extends JFrame {
     private MainMenu mainMenu;
     private HowView howView;
     private SettingView settingView;
+    private InfoView infoView;
 
     private void changeView(int idx){
+        if(idx==6) System.exit(0);
+
         if(idx>cardsLength||idx<0)return;
+
         String name=String.valueOf(idx);
         cardLayout.show(cardPanel,name);
+
         for(Component comp : cardPanel.getComponents()){
             if(comp.getName().equalsIgnoreCase(name))
                 comp.requestFocusInWindow();
         }
+
     }
     private void addView(Component panel){
         panel.setName(String.valueOf(cardsLength));
@@ -71,10 +77,14 @@ public class GameFrame extends JFrame {
         settingView=new SettingView(()->changeView(0));
         settingView.setSize(getWidth(),getHeight());
 
+        infoView=new InfoView(()->changeView(0));
+        infoView.setSize(getWidth(),getHeight());
+
         addView(mainMenu);
         addView(gamePanel);
         addView(settingView);
         addView(howView);
+        addView(infoView);
 
         changeView(0);
 
