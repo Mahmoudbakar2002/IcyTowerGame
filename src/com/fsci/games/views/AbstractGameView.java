@@ -8,7 +8,7 @@ public abstract class AbstractGameView extends JPanel implements KeyListener {
     private Image bgImage;
 
     private JLabel background;
-    {
+    public void init(){
         bgImage=new ImageIcon(getClass().getResource("/assets/menu/menubg.png")).getImage();
 
         setLayout(null);

@@ -6,9 +6,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class HowView extends JPanel implements KeyListener{
-    private JLabel bg;
-    private Image bgImage;
+public class HowView extends AbstractGameView{
 
     private Runnable  returnMenu;
     public HowView(Runnable returnMenu){
@@ -18,20 +16,8 @@ public class HowView extends JPanel implements KeyListener{
         setFocusable(true);
         addKeyListener(this);
 
-        bgImage =new ImageIcon(getClass().getResource("/assets/howbg.jpg")).getImage();
-
-        bg=new JLabel(new ImageIcon(bgImage));
-        bg.setBounds(0,0,700,700);
-        add(bg);
-    }
-
-    @Override
-    public void setSize(int w,int h ) {
-        super.setSize(w,h);
-        bg.setSize(w,h);
-        if (w>0&&h>0)
-            bg.setIcon(new ImageIcon(bgImage.getScaledInstance(getWidth(),getHeight(), Image.SCALE_DEFAULT)));
-
+        init();
+        setBgImage(new ImageIcon(getClass().getResource("/assets/howbg.jpg")).getImage());
     }
 
     @Override
