@@ -111,10 +111,29 @@ public class FloorFactory {
 
         int nearest= -1;
         for (FloorData e:floorData){
-            if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-10)
-                nearest=e.y;
+            if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-20) {
+                nearest = e.y;
+                if(Math.abs(player.getX()-(e.x-20))<=10)
+                    player.setOnEdge(true,false);
+                else if(Math.abs(player.getX()-(e.x+e.width-20))<=10)
+                    player.setOnEdge(false,true);
+                else
+                    player.setOnEdge(false,false);
+            }
         };
         return nearest;
+    }
+    public void isOnEdge(Character player){
+        for (FloorData e:floorData){
+            if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-20) {
+                if(Math.abs(player.getX()-(e.x-20))<=10)
+                    player.setOnEdge(true,false);
+                else if(Math.abs(player.getX()-(e.x+e.width-20))<=10)
+                    player.setOnEdge(false,true);
+                else
+                    player.setOnEdge(false,false);
+            }
+        }
     }
     public int getFloorIndex() {
         return floorIndex;
