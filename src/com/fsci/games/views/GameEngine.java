@@ -48,7 +48,7 @@ public class GameEngine extends ListenerPanel {
         deltaY=0;
         uptime =0;
         fraction_factor = 0.09;
-        gravity = 0.02;
+        gravity = 0.018;
         projectile_theta = 70;
         accelration_factor = 0.2;
         Max_speed = 8;
@@ -108,12 +108,13 @@ public class GameEngine extends ListenerPanel {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
         if(player.getY()>maxY/2){
-            if(maxY- player.getY()<=200)
+            if(Math.abs(maxY/2 - player.getY())>=50)
                 scrollDy=5;
+            else if(Math.abs(maxY/2 - player.getY())>=100)
+                scrollDy=10;
             else
-                scrollDy=1;
+                scrollDy=floorFactory.getFloorIndex()/50+1;
         }
-
         // draw background
         drawBg(gl);
 
@@ -130,8 +131,6 @@ public class GameEngine extends ListenerPanel {
         }
 
         /* physics for moving, gravity and velocity */
-
-
         //deaccelerate
         fraction();
         // if y <= one for floor's y
