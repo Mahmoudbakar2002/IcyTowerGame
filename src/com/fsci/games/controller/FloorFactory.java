@@ -123,10 +123,6 @@ public class FloorFactory {
         return yGap;
     }
 
-    public void setyGap(int yGap) {
-        this.yGap = yGap;
-    }
-
     private class FloorData{
         public FloorData(int x, int y, int width,String type) {
             this.x = x;
