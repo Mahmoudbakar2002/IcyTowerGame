@@ -12,13 +12,11 @@ public class GameFrame extends JFrame {
     private CardLayout cardLayout;
     private int cardsLength=0;
 
-    // game panel data
-    private FPSAnimator fps;
-    private GLCanvas gamePanel;
-    private GameEngine engine;
+
 
 
     private MainMenu mainMenu;
+    private GameView gameView;
     private HowView howView;
     private SettingView settingView;
     private InfoView infoView;
@@ -59,19 +57,13 @@ public class GameFrame extends JFrame {
         this.add(cardPanel,BorderLayout.CENTER);
 
 
-        engine=new GameEngine();
 
-        gamePanel=new GLCanvas();
-        gamePanel.addKeyListener(engine);
-        gamePanel.addGLEventListener(engine);
-        this.addKeyListener(engine);
-
-        // animator
-        fps =new FPSAnimator(gamePanel,70);
-        fps.start();
 
         mainMenu=new MainMenu(this::changeView);
         mainMenu.setSize(getWidth(),getHeight());
+
+        gameView=new GameView(()->changeView(0));
+        gameView.setSize(getWidth(),getHeight());
 
         howView=new HowView(()->changeView(0));
         howView.setSize(getWidth(),getHeight());
@@ -86,7 +78,7 @@ public class GameFrame extends JFrame {
         scoreBoard.setSize(getWidth(),getHeight());
 
         addView(mainMenu);
-        addView(gamePanel);
+        addView(gameView);
         addView(settingView);
         addView(howView);
         addView(infoView);
