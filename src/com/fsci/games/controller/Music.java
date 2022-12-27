@@ -11,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Music {
     private Clip clip;
+    private boolean isPlayed=false;
+
     private AudioInputStream audioInputStream;
     public Music(String filePath) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
         audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
@@ -24,6 +26,8 @@ public class Music {
         clip.stop();
     }
     public void once(){
+        if(isPlayed)return;
+        isPlayed=true;
         clip.setMicrosecondPosition(0);
         clip.start();
     }
