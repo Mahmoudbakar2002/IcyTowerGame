@@ -97,9 +97,7 @@ public class Character implements DrawableGlObject {
         if(internalTime%10==0) updateCurrentState();
         if(internalTime%2==0&& currentState==State.ROTATE)
             updateCurrentState();
-        if((rotateState>=12|| (yState!=0 && (currentState==State.ROTATE)))){
-            rotatejump.once();
-        }
+
     }
 
 
@@ -114,9 +112,13 @@ public class Character implements DrawableGlObject {
         // auth : mohamed atef
         if(rotateState>=12 || (yState!=0&&currentState==State.ROTATE)){
             currentState=State.ROTATE;
+            if(rotateAngle==0){
+                rotatejump.once();
+            }
             rotateAngle -= 30;
         }
         else {
+
             rotateAngle=0;
             // if xState 0 and yState 0 that mean is still stand
              if (xState == 0 && yState == 0 && (onleftEdge || onrightEdge)) {
