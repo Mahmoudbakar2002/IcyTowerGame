@@ -13,6 +13,9 @@ import java.util.BitSet;
 public abstract class  ListenerPanel implements GLEventListener, KeyListener {
     private BitSet bitSet=new BitSet(0xFFFF);
 
+    public void resetBitset(){
+        bitSet.set(0, bitSet.length(),false);
+    }
 
     public boolean isKeyPressed(int keyCode){
         return bitSet.get(keyCode);
@@ -21,6 +24,7 @@ public abstract class  ListenerPanel implements GLEventListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
 //        if(e.getKeyCode()>= bitSet.length()) return;
+
         bitSet.set(e.getKeyCode());
     }
 
