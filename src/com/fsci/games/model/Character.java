@@ -103,7 +103,7 @@ public class Character implements DrawableGlObject {
         yScale=1;
         //high jump
         // auth : mohamed atef
-        if(rotateState>=12 || (yState!=0&&currentState==State.ROTATE)){
+        if(rotateState>=12 || (yState>=0&&currentState==State.ROTATE)){
             currentState=State.ROTATE;
             if(rotateAngle==0){
                 rotatejump.playonce();
