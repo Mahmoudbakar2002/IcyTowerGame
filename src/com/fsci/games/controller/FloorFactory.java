@@ -15,7 +15,7 @@ public class FloorFactory {
     private String floors[]={"stone","ice","wood"};
     private Map<String, Floor> map;
     private Image numBoard;
-    private int yGap=60,maxHigh,maxWidth ,initialY=40,floorIndex=1;
+    private int yGap=60,maxHigh,maxWidth ,initialY,floorIndex;
     private TextRenderer textRenderer;
 
     private LinkedList<FloorData> floorData;
@@ -58,7 +58,8 @@ public class FloorFactory {
 
 
     public void reset(){
-        initialY=40;floorIndex=1;
+        initialY=40;
+        floorIndex=0;
         floorData=new LinkedList<FloorData>();
         floorData.add(new FloorData(0,initialY,maxWidth,floors[getFloorIndex(floorIndex++)]));
 
@@ -114,7 +115,6 @@ public class FloorFactory {
 
 
     public int getNearestFloor(Character player){
-
         int nearest= -1;
         for (FloorData e:floorData){
             if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-20) {
@@ -123,6 +123,17 @@ public class FloorFactory {
         };
         return nearest;
     }
+
+    public int getLastPassedFloorIndex(Character player){
+        int nearest= -1;
+        for (FloorData e:floorData){
+            if(e.y<= (player).getY()) {
+                nearest ++;
+            }
+        };
+        return floorIndex- floorData.size()+nearest;
+    }
+
     public void isOnEdge(Character player){
         for (FloorData e:floorData){
             if(e.y<= (player).getY() && player.getX()>=e.x-20&&player.getX()<=e.x+e.width-20) {
