@@ -29,7 +29,7 @@ public class PhysicsScene {
         gravity = 0.018;
         projectile_theta = 70;
         accelration_factor = 0.2;
-        Max_speed = 8;
+        Max_speed = 7;
         Wallpadding = 20;
         nearst_floor = 40;
     }
