@@ -30,6 +30,9 @@ public class ScoreReader {
             return name+"\t"+score;
         }
     }
+    public static boolean isHighScore(int score){
+        return score>scores[scores.length-1].score||scores[scores.length-1].score==0 ;
+    }
     public static void addNewScore(Score score){
         int idx=0;
         for(;idx<scores.length;idx++){

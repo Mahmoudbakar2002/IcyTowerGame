@@ -41,6 +41,14 @@ public class GameFrame extends JFrame {
         cardPanel.add(panel,String.valueOf(cardsLength++));
     }
 
+    private void scoreChecker(int score){
+        if(!ScoreReader.isHighScore(score))return;
+        String name=JOptionPane.showInputDialog(this,"You get High School\nEnter Your Name","High Score",JOptionPane.INFORMATION_MESSAGE);
+        if(name==null ||name.trim().isEmpty())
+            name="-no-name-";
+
+        ScoreReader.addNewScore(new ScoreReader.Score(name,score));
+    }
 
     public GameFrame(){
         initialize();
@@ -62,7 +70,7 @@ public class GameFrame extends JFrame {
         mainMenu=new MainMenu(this::changeView);
         mainMenu.setSize(getWidth(),getHeight());
 
-        gameView=new GameView(()->changeView(0));
+        gameView=new GameView(()->changeView(0),(e)->scoreChecker(e));
         gameView.setSize(getWidth(),getHeight());
 
         howView=new HowView(()->changeView(0));

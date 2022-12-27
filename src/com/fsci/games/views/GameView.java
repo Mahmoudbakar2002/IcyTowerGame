@@ -4,6 +4,7 @@ import com.sun.opengl.util.FPSAnimator;
 
 import javax.media.opengl.GLCanvas;
 import java.awt.event.KeyEvent;
+import java.util.function.Consumer;
 
 public class GameView extends GLCanvas {
     // game panel data
@@ -12,11 +13,11 @@ public class GameView extends GLCanvas {
     private GameEngine engine;
 
     private Runnable returnMenu;
-    public GameView(Runnable returnMenu){
+    public GameView(Runnable returnMenu, Consumer<Integer> scoreChecker){
         super();
 
         this.returnMenu=returnMenu;
-        engine=new GameEngine(returnMenu);
+        engine=new GameEngine(returnMenu,scoreChecker);
 
 
 
@@ -32,7 +33,6 @@ public class GameView extends GLCanvas {
         super.setVisible(b);
         if(b){
             fps.start();
-
             engine.resetGame();
             engine.setCurrentGame(GameEngine.GameState.PLAYING);
         }else {
