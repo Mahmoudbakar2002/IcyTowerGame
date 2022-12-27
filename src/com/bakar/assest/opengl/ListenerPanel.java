@@ -1,5 +1,6 @@
 package com.bakar.assest.opengl;
 
+import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -38,4 +39,12 @@ public abstract class  ListenerPanel implements GLEventListener, KeyListener {
     public void keyTyped(KeyEvent e) {
         // don't do any thing here
     }
+    @Override
+    public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
+    }
+
+    @Override
+    public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
+    }
+
 }
