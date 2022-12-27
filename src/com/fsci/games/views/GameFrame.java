@@ -1,5 +1,6 @@
 package com.fsci.games.views;
 
+import com.fsci.games.utills.ScoreReader;
 import com.sun.opengl.util.FPSAnimator;
 
 import javax.media.opengl.GLCanvas;
@@ -21,6 +22,7 @@ public class GameFrame extends JFrame {
     private HowView howView;
     private SettingView settingView;
     private InfoView infoView;
+    private ScoreBoard scoreBoard;
 
     private void changeView(int idx){
         if(idx==6) System.exit(0);
@@ -80,11 +82,15 @@ public class GameFrame extends JFrame {
         infoView=new InfoView(()->changeView(0));
         infoView.setSize(getWidth(),getHeight());
 
+        scoreBoard=new ScoreBoard(()->changeView(0));
+        scoreBoard.setSize(getWidth(),getHeight());
+
         addView(mainMenu);
         addView(gamePanel);
         addView(settingView);
         addView(howView);
         addView(infoView);
+        addView(scoreBoard);
 
         changeView(0);
 
