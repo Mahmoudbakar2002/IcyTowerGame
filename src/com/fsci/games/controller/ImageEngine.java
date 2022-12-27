@@ -16,13 +16,26 @@ public class ImageEngine {
      *  final Variables
      ***************************************/
     private static final String PATH_FOR_CHARACTER="assets/characters/";
+    private static final String PATH_FOR_BACKGROUND="assets/bg.png";
+    private static final String PATH_FOR_GAME_OVER="assets/gameover.png";
 
+    private static  Image bgImage,gameOverWord;
 
     // characters Map save loaded Characters to prevent load it many times
     private static Map<String ,Map<Character.State, Image>> characters;
     static {
         characters=new HashMap<>();
+
+        try {
+            bgImage=new Image(PATH_FOR_BACKGROUND);
+            gameOverWord=new Image(PATH_FOR_GAME_OVER);
+
+        }catch (IOException ex){
+            System.out.println("Error in load Images :" + ex.getMessage() );
+        }
     }
+
+
 
 
     /**
@@ -57,4 +70,13 @@ public class ImageEngine {
 
         return character;
     }
+
+    public static Image getBackGroundImage(){
+        return bgImage;
+    }
+    public static Image getGameOverImage(){
+        gameOverWord.useSizeRatio(true);
+        return gameOverWord;
+    }
+
 }

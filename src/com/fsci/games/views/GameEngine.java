@@ -32,36 +32,53 @@ public class GameEngine extends ListenerPanel {
             maxY=700,
             minY=0;
 
+    /** Character Data */
     private final static String characterChosen="haroldv4";
     private Character player;
     private Map<Character.State, Image> collection;
 
-    private PhysicsScene physics;
-    // data for background
-    private Image bgImage;
-    private int bgLocation,repeatBG,scrollDy;
-    // ----
-    private FloorFactory floorFactory;
 
+    /** Images draws in scene*/
+    private Image bgImage;
     private Image gameOverWord;
 
 
+    /** Game Scene Controller */
+    private PhysicsScene physics;
+    private FloorFactory floorFactory;
     private GameState currentGame=GameState.PLAYING;
+
+    /** data for background and Camera Scene */
+    private int bgLocation,repeatBG,scrollDy;
+
+
+    private Music m,menusound,amazing,dieandtryagine;
+
+
+    /***  Runnable to return to Main menu*/
+    private Runnable returnMenu;
+
+
+    /** Inner enum represent Game state */
     public enum GameState{
         PLAYING,PAUSE,GAME_OVER,STOP;
+
     }
 
-    private Runnable returnMenu;
     public GameEngine(Runnable runnable){
         this.returnMenu=runnable;
+
+        /****** read Images ********/
         collection = ImageEngine.loadCharacterImagesState(characterChosen);
+        bgImage=ImageEngine.getBackGroundImage();
+        gameOverWord=ImageEngine.getGameOverImage();
+
+
         /* initialize player and passing character images collection*/
         player= Character.getCharacter(collection);
         physics=new PhysicsScene(player,minX,maxX,minY,maxY);
         floorFactory=new FloorFactory(maxX,maxY,100);
     }
-
-    private Music m,menusound,amazing,dieandtryagine;
 
     /* reset function to return game state to initial state */
     public void resetGame(){
@@ -70,12 +87,8 @@ public class GameEngine extends ListenerPanel {
         floorFactory.reset();
         bgLocation=0;
         scrollDy=0;
+        repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
         resetBitset();
-    }
-
-    public void setCurrentGame(GameState currentGame) {
-        this.currentGame = currentGame;
-
     }
 
     /* initial function to initialize gl canvas settings*/
@@ -113,20 +126,12 @@ public class GameEngine extends ListenerPanel {
         floorFactory.load(gl,glu);
 
         // load background image
-        try {
-            bgImage=new Image("assets/bg.png");
-            bgImage.loadInGl(gl,glu);
-            repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
+        bgImage.loadInGl(gl,glu);
+        gameOverWord.loadInGl(gl,glu);
 
-            gameOverWord=new Image("assets/gameover.png");
-            gameOverWord.loadInGl(gl,glu);
-            gameOverWord.useSizeRatio(true);
-            gameOverWord.setHeight(gameOverWord.getHeight()*1.2);
-            gameOverWord.setX((maxX-gameOverWord.getWidth() )/2);
 
-        }catch (IOException ex){
-            System.out.println("Error in load Background :" + ex.getMessage() );
-        }
+        gameOverWord.setHeight(gameOverWord.getHeight()*1.2);
+        gameOverWord.setX((maxX-gameOverWord.getWidth() )/2);
 
         resetGame();
         //play music
@@ -158,28 +163,28 @@ public class GameEngine extends ListenerPanel {
         physics.updateNearestFloor(floorFactory.getNearestFloor(player));
         floorFactory.isOnEdge(player);
 
-        if(currentGame==GameState.GAME_OVER){
-            System.out.println("in over");
+
+
+        //gameover
+        if(player.getY()<=0){
+            if(currentGame!=GameState.GAME_OVER) {
+                scrollDy = 0;
+                dieandtryagine.once();
+                m.stop();
+                currentGame = GameState.GAME_OVER;
+            }
+
             if(gameOverWord.getY()<maxY/2+50) {
                 gameOverWord.setY(gameOverWord.getY()+10);
             }
             gameOverWord.draw(gl);
             for(int i=0;i<0xFF;i++)
-            if (isKeyPressed(i)) {
-                returnMenu.run();
-                gameOverWord.setY(0);
-                currentGame=GameState.STOP;
-            }
+                if (isKeyPressed(i)&&gameOverWord.getY()>=maxY/2.0) {
+                    returnMenu.run();
+                    gameOverWord.setY(0);
+                    currentGame=GameState.STOP;
+                }
 
-            return;
-        }
-
-        //gameover
-        if(player.getY()<=0){
-            scrollDy=0;
-            dieandtryagine.once();
-            m.stop();
-            currentGame=GameState.GAME_OVER;
             return;
         }
 
@@ -212,12 +217,9 @@ public class GameEngine extends ListenerPanel {
         }
     }
 
-    @Override
-    public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
+    public void setCurrentGame(GameState currentGame) {
+        this.currentGame = currentGame;
     }
 
-    @Override
-    public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
-    }
 
 }
