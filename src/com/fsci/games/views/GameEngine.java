@@ -2,20 +2,21 @@ package com.fsci.games.views;
 
 import com.bakar.assest.opengl.ListenerPanel;
 import com.bakar.assest.opengl.texture.Image;
-import com.fsci.games.controller.FloorFactory;
-import com.fsci.games.controller.ImageEngine;
-import com.fsci.games.controller.Music;
-import com.fsci.games.controller.PhysicsScene;
+import com.fsci.games.controller.*;
 import com.fsci.games.model.Character;
+import com.fsci.games.utills.FontLoader;
+import com.sun.opengl.util.j2d.TextRenderer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Game Engine class it's main class use :
@@ -36,6 +37,7 @@ public class GameEngine extends ListenerPanel {
     private final static String characterChosen="haroldv4";
     private Character player;
     private Map<Character.State, Image> collection;
+    private int score=0;
 
 
     /** Images draws in scene*/
@@ -47,16 +49,20 @@ public class GameEngine extends ListenerPanel {
     private PhysicsScene physics;
     private FloorFactory floorFactory;
     private GameState currentGame=GameState.PLAYING;
+    private TextRenderer textRenderer,smallTextRender;
 
     /** data for background and Camera Scene */
     private int bgLocation,repeatBG,scrollDy;
 
 
-    private Music m,menusound,amazing,dieandtryagine;
+    private Music m,dieAndTryAgain;
 
 
     /***  Runnable to return to Main menu*/
     private Runnable returnMenu;
+    private Consumer<Integer> scoreChecker;
+
+
 
 
     /** Inner enum represent Game state */
@@ -65,8 +71,9 @@ public class GameEngine extends ListenerPanel {
 
     }
 
-    public GameEngine(Runnable runnable){
+    public GameEngine(Runnable runnable,Consumer scoreChecker){
         this.returnMenu=runnable;
+        this.scoreChecker=scoreChecker;
 
         /****** read Images ********/
         collection = ImageEngine.loadCharacterImagesState(characterChosen);
@@ -78,6 +85,8 @@ public class GameEngine extends ListenerPanel {
         player= Character.getCharacter(collection);
         physics=new PhysicsScene(player,minX,maxX,minY,maxY);
         floorFactory=new FloorFactory(maxX,maxY,100);
+        m= MusicEngine.getGameMusic();
+        dieAndTryAgain=MusicEngine.getGameMusic();
     }
 
     /* reset function to return game state to initial state */
@@ -87,7 +96,13 @@ public class GameEngine extends ListenerPanel {
         floorFactory.reset();
         bgLocation=0;
         scrollDy=0;
+        score=0;
         repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
+        gameOverWord.setHeight(gameOverWord.getHeight()*1.2);
+        gameOverWord.setX((maxX-gameOverWord.getWidth() )/2);
+        gameOverWord.setY(-gameOverWord.getHeight()-10);
+
+        m.restart();
         resetBitset();
     }
 
@@ -108,15 +123,9 @@ public class GameEngine extends ListenerPanel {
         // enabling texture mapping
         gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        try {
-            m = new Music("src/assets/Sounds/icy_tower_ingame.wav");
-            menusound = new Music("src/assets/Sounds/icy_tower.wav");
-            amazing = new Music("src/assets/Sounds/amazing.wav");
-            dieandtryagine = new Music("src/assets/Sounds/dieandtryagine.wav");
-        }
-        catch (Exception e) {
-            e.printStackTrace(System.out);
-        }
+
+
+
 
         /* ---  load character images ----*/
         for(Map.Entry entry: collection.entrySet()){
@@ -129,13 +138,17 @@ public class GameEngine extends ListenerPanel {
         bgImage.loadInGl(gl,glu);
         gameOverWord.loadInGl(gl,glu);
 
+        textRenderer=new TextRenderer(FontLoader.Broom.deriveFont(40.0f).deriveFont(Font.BOLD));
+        textRenderer.setColor(Color.WHITE);
+        textRenderer.setSmoothing(true);
 
-        gameOverWord.setHeight(gameOverWord.getHeight()*1.2);
-        gameOverWord.setX((maxX-gameOverWord.getWidth() )/2);
+        smallTextRender=new TextRenderer(FontLoader.Broom.deriveFont(25.0f));
+        smallTextRender.setColor(Color.WHITE);
+        smallTextRender.setSmoothing(true);
+
+
 
         resetGame();
-        //play music
-        m.play();
     }
 
     @Override
@@ -169,19 +182,29 @@ public class GameEngine extends ListenerPanel {
         if(player.getY()<=0){
             if(currentGame!=GameState.GAME_OVER) {
                 scrollDy = 0;
-                dieandtryagine.once();
+                dieAndTryAgain.playonce();
                 m.stop();
                 currentGame = GameState.GAME_OVER;
+                scoreChecker.accept(score);
             }
 
             if(gameOverWord.getY()<maxY/2+50) {
                 gameOverWord.setY(gameOverWord.getY()+10);
             }
+            /**Render Text*/
+            textRenderer.beginRendering(maxX-minX, maxY-minY);
+            textRenderer.draw("Your Score is:"+score,(int)gameOverWord.getX()+50,(int)(gameOverWord.getY()- gameOverWord.getHeight()-10));
+            textRenderer.endRendering();
+
+            smallTextRender.beginRendering(maxX-minX, maxY-minY);
+            smallTextRender.draw("press any key to return main menu",100,(int)(gameOverWord.getY()- gameOverWord.getHeight()-100));
+            smallTextRender.endRendering();
+
             gameOverWord.draw(gl);
             for(int i=0;i<0xFF;i++)
                 if (isKeyPressed(i)&&gameOverWord.getY()>=maxY/2.0) {
                     returnMenu.run();
-                    gameOverWord.setY(0);
+                    gameOverWord.setY(-gameOverWord.getHeight());
                     currentGame=GameState.STOP;
                 }
 
@@ -204,6 +227,14 @@ public class GameEngine extends ListenerPanel {
             player.setLocation(player.getX(), physics.getNearst_floor());
 
         player.draw(gl);
+
+
+        score=Math.max(score,10*floorFactory.getLastPassedFloorIndex(player));
+
+        /**Render score*/
+        textRenderer.beginRendering(maxX-minX, maxY-minY);
+        textRenderer.draw(String.valueOf(score),10,maxY-50);
+        textRenderer.endRendering();
     }
 
 
