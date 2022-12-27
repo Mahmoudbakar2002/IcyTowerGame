@@ -24,6 +24,7 @@ public class Character implements DrawableGlObject {
     private State currentState;
     private Map<State, Image> stateImageMap;
     private double rotateAngle;
+    private int it;
     /*
     *  state and internal time use for update character state
     *  if state equal 0 is still stand
@@ -53,6 +54,7 @@ public class Character implements DrawableGlObject {
         rotatejump = new Music("src/assets/Sounds/rotatejump.wav");
         jumps = new Music("src/assets/Sounds/jumps.wav");
         rotateAngle=0;
+        it=0;
     }
 
 
@@ -90,7 +92,6 @@ public class Character implements DrawableGlObject {
         if(internalTime%10==0) updateCurrentState();
         if(currentState==State.ROTATE)
             updateCurrentState();
-
     }
 
 
@@ -103,7 +104,8 @@ public class Character implements DrawableGlObject {
         yScale=1;
         //high jump
         // auth : mohamed atef
-        if(rotateState>=12 || (yState>=0&&currentState==State.ROTATE)){
+        if(rotateState>=12 || (yState!=0&&currentState==State.ROTATE && it<=60)){
+            it++;
             currentState=State.ROTATE;
             if(rotateAngle==0){
                 rotatejump.playonce();
@@ -111,7 +113,7 @@ public class Character implements DrawableGlObject {
             rotateAngle -= 15;
         }
         else {
-
+            it=0;
             rotateAngle=0;
             // if xState 0 and yState 0 that mean is still stand
              if (xState == 0 && yState == 0 && (onleftEdge || onrightEdge)) {
