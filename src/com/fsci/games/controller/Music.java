@@ -53,9 +53,7 @@ public class Music {
     }
     public void playonce(){
         try {
-            clip.close();
-            audioInputStream = AudioSystem.getAudioInputStream(file.getAbsoluteFile());
-            clip.open(audioInputStream);
+            clip.setFramePosition(0);
             this.play();
         } catch (Exception e) {
             e.printStackTrace();
