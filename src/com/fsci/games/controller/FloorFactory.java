@@ -22,7 +22,7 @@ public class FloorFactory {
     private  GL gl;
 
 
-    public FloorFactory(GL gl, GLU glu,int maxWidth,int maxHigh,int yGap){
+    public FloorFactory(int maxWidth,int maxHigh,int yGap){
         this.maxHigh=maxHigh;
         this.maxWidth=maxWidth;
         this.gl=gl;
@@ -30,16 +30,11 @@ public class FloorFactory {
 
 //        textRenderer=new TextRenderer(new Font("Courier New", Font.BOLD, 120));
 //        textRenderer.beginRendering(maxWidth, maxHigh);
-
-        floorData=new LinkedList<FloorData>();
-        floorData.add(new FloorData(0,initialY,maxWidth,floors[getFloorIndex(floorIndex++)]));
-
-        while (floorData.getLast().y<maxHigh)
-            createFloor();
-
-
         map=new HashMap<>();
-
+        reset();
+    }
+    public void load(GL gl, GLU glu){
+        this.gl=gl;
         try {
             for (String floorStr:floors) {
                 Image start = new Image("assets/floors/"+floorStr+"/start.png");
@@ -59,6 +54,17 @@ public class FloorFactory {
         }catch (IOException exception){
             System.out.println("Error in load Images : "+exception.getMessage());
         }
+    }
+
+
+    public void reset(){
+        initialY=40;floorIndex=1;
+        floorData=new LinkedList<FloorData>();
+        floorData.add(new FloorData(0,initialY,maxWidth,floors[getFloorIndex(floorIndex++)]));
+
+        while (floorData.getLast().y<maxHigh)
+            createFloor();
+
     }
 
     public void drawFloors(){
