@@ -5,8 +5,6 @@ import com.bakar.assest.opengl.texture.Image;
 import com.fsci.games.controller.Music;
 
 import javax.media.opengl.GL;
-import javax.sound.sampled.LineUnavailableException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,13 +50,8 @@ public class Character implements DrawableGlObject {
         currentState=State.IDLE;
         xScale=1;
         yScale=1;
-        try {
-            rotatejump = new Music("src/assets/Sounds/rotatejump.wav");
-            jumps = new Music("src/assets/Sounds/jumps.wav");
-        }
-        catch (Exception e) {
-            e.printStackTrace(System.out);
-        }
+        rotatejump = new Music("src/assets/Sounds/rotatejump.wav");
+        jumps = new Music("src/assets/Sounds/jumps.wav");
         rotateAngle=0;
     }
 
@@ -113,7 +106,7 @@ public class Character implements DrawableGlObject {
         if(rotateState>=12 || (yState!=0&&currentState==State.ROTATE)){
             currentState=State.ROTATE;
             if(rotateAngle==0){
-                rotatejump.once();
+                rotatejump.playonce();
             }
             rotateAngle -= 30;
         }

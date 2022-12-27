@@ -10,25 +10,55 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class Music {
-    private Clip clip;
-    private boolean isPlayed=false;
-
-    private AudioInputStream audioInputStream;
-    public Music(String filePath) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-        audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-        clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
+    int currentFrame= 0;
+    Clip clip;
+    AudioInputStream audioInputStream;
+    File file;
+    public Music(String filePath) {
+        // create AudioInputStream object
+        try {
+            file = new File(filePath);
+            audioInputStream = AudioSystem.getAudioInputStream(file.getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+        }  catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    public  void play(){
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-    }
-    public void stop(){
+    public void stop() {
+        currentFrame = 0;
         clip.stop();
+        clip.close();
     }
-    public void once(){
-        if(isPlayed)return;
-        isPlayed=true;
-        clip.setMicrosecondPosition(0);
+    public void play() {
         clip.start();
+    }
+
+    public void restart() {
+        clip.stop();
+        clip.close();
+        resetAudioStream();
+        currentFrame = 0;
+        clip.setFramePosition(0);
+        this.play();
+    }
+    public void resetAudioStream() {
+        try {
+            audioInputStream = AudioSystem.getAudioInputStream(file.getAbsoluteFile());
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void playonce(){
+        try {
+            clip.close();
+            audioInputStream = AudioSystem.getAudioInputStream(file.getAbsoluteFile());
+            clip.open(audioInputStream);
+            this.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
