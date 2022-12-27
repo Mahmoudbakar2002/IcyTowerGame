@@ -25,7 +25,7 @@ public class PhysicsScene {
         deltaX=0;
         deltaY=0;
         uptime =0;
-        fraction_factor = 0.09;
+        fraction_factor = 0.05;
         gravity = 0.018;
         projectile_theta = 70;
         accelration_factor = 0.2;
