@@ -88,7 +88,7 @@ public class Character implements DrawableGlObject {
 
         // update state every 1/6 seconds (frame rate is 60) : general  (FPS/10) change every second
         if(internalTime%10==0) updateCurrentState();
-        if(internalTime%2==0&& currentState==State.ROTATE)
+        if(currentState==State.ROTATE)
             updateCurrentState();
 
     }
@@ -108,7 +108,7 @@ public class Character implements DrawableGlObject {
             if(rotateAngle==0){
                 rotatejump.playonce();
             }
-            rotateAngle -= 30;
+            rotateAngle -= 15;
         }
         else {
 
