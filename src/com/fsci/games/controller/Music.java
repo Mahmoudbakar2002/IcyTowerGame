@@ -1,12 +1,10 @@
 package com.fsci.games.controller;
 
+import com.fsci.games.utills.Config;
+
 import java.io.File;
 import java.io.IOException;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 
 
 public class Music {
@@ -31,6 +29,9 @@ public class Music {
         clip.close();
     }
     public void play() {
+        FloatControl gainControl=(FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+        float volume= Config.SOUND_LEVEL*1.0f/100.0f;
+        gainControl.setValue(20f*(float) Math.log10(volume));
         clip.start();
     }
 

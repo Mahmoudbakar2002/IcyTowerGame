@@ -19,7 +19,7 @@ public class ImageEngine {
     private static final String PATH_FOR_BACKGROUND="assets/bg.png";
     private static final String PATH_FOR_GAME_OVER="assets/gameover.png";
 
-    private static  Image bgImage,gameOverWord;
+    private static  Image bgImage,gameOverWord,backGroundShadow;
 
     // characters Map save loaded Characters to prevent load it many times
     private static Map<String ,Map<Character.State, Image>> characters;
@@ -29,6 +29,7 @@ public class ImageEngine {
         try {
             bgImage=new Image(PATH_FOR_BACKGROUND);
             gameOverWord=new Image(PATH_FOR_GAME_OVER);
+            backGroundShadow=new Image("assets/black-shadow.png");
 
         }catch (IOException ex){
             System.out.println("Error in load Images :" + ex.getMessage() );
@@ -79,4 +80,7 @@ public class ImageEngine {
         return gameOverWord;
     }
 
+    public static Image getBackGroundShadow() {
+        return backGroundShadow;
+    }
 }

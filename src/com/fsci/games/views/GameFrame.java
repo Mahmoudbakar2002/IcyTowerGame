@@ -43,7 +43,7 @@ public class GameFrame extends JFrame {
 
     private void scoreChecker(int score){
         if(!ScoreReader.isHighScore(score))return;
-        String name=JOptionPane.showInputDialog(this,"You get High School\nEnter Your Name","High Score",JOptionPane.INFORMATION_MESSAGE);
+        String name=JOptionPane.showInputDialog(this,"You get High Score\nEnter Your Name","High Score",JOptionPane.INFORMATION_MESSAGE);
         if(name==null ||name.trim().isEmpty())
             name="-no-name-";
 

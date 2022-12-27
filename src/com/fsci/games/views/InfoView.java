@@ -28,6 +28,13 @@ public class InfoView extends AbstractGameView{
         textView.setFont(FontLoader.Broom.deriveFont(25.0f));
         add(textView);
 
+        JLabel dataView=new JLabel();
+        dataView.setBounds(200,150,500,400);
+        dataView.setFont(FontLoader.Broom.deriveFont(25f));
+        add(dataView);
+
+
+
         add(paper);
 
         init();

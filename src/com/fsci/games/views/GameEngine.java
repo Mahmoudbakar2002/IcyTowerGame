@@ -15,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -43,6 +44,7 @@ public class GameEngine extends ListenerPanel {
     /** Images draws in scene*/
     private Image bgImage;
     private Image gameOverWord;
+    private Image backGroundShadow;
 
 
     /** Game Scene Controller */
@@ -79,6 +81,7 @@ public class GameEngine extends ListenerPanel {
         collection = ImageEngine.loadCharacterImagesState(characterChosen);
         bgImage=ImageEngine.getBackGroundImage();
         gameOverWord=ImageEngine.getGameOverImage();
+        backGroundShadow=ImageEngine.getBackGroundShadow();
 
 
         /* initialize player and passing character images collection*/
@@ -98,7 +101,7 @@ public class GameEngine extends ListenerPanel {
         scrollDy=0;
         score=0;
         repeatBG = (maxX-minX+ ((int) bgImage.getHeight())-1)/ (int)bgImage.getHeight();
-        gameOverWord.setHeight(gameOverWord.getHeight()*1.2);
+        gameOverWord.setHeight(100);
         gameOverWord.setX((maxX-gameOverWord.getWidth() )/2);
         gameOverWord.setY(-gameOverWord.getHeight()-10);
 
@@ -137,6 +140,7 @@ public class GameEngine extends ListenerPanel {
         // load background image
         bgImage.loadInGl(gl,glu);
         gameOverWord.loadInGl(gl,glu);
+        backGroundShadow.loadInGl(gl,glu);
 
         textRenderer=new TextRenderer(FontLoader.Broom.deriveFont(40.0f).deriveFont(Font.BOLD));
         textRenderer.setColor(Color.WHITE);
@@ -153,10 +157,17 @@ public class GameEngine extends ListenerPanel {
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
-        if(currentGame==GameState.STOP) return;
-
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
+
+        if(currentGame==GameState.STOP) return;
+
+        if(currentGame==GameState.PLAYING&&isKeyPressed(KeyEvent.VK_P)){
+            currentGame=GameState.PAUSE;
+            return;
+        }
+
+
 
         if(player.getY()>maxY/2.0){
             if(Math.abs(maxY/2.0 - player.getY())>=50)
@@ -168,14 +179,31 @@ public class GameEngine extends ListenerPanel {
         }
         // draw background
         drawBg(gl);
+        floorFactory.drawFloors();
+
+
 
         // draw and scroll
-        floorFactory.scrollDown(scrollDy);
-        floorFactory.drawFloors();
-        player.setLocation(player.getX(), player.getY()-scrollDy);
-        physics.updateNearestFloor(floorFactory.getNearestFloor(player));
-        floorFactory.isOnEdge(player);
+        if(currentGame== GameState.PLAYING){
+            floorFactory.scrollDown(scrollDy);
+            player.setLocation(player.getX(), player.getY() - scrollDy);
+            physics.updateNearestFloor(floorFactory.getNearestFloor(player));
+            floorFactory.isOnEdge(player);
+        }
 
+        if(currentGame==GameState.PAUSE){
+            for(int i=0;i<0xFF;i++)
+                if (isKeyPressed(i) && i!= KeyEvent.VK_P) {
+                    currentGame=GameState.PLAYING;
+                }
+            backGroundShadow.draw(gl);
+            smallTextRender.beginRendering(maxX-minX, maxY-minY);
+            smallTextRender.draw("press any key (expect p)to Continue",100,(int)(maxY/2.0));
+            smallTextRender.endRendering();
+
+
+            return;
+        }
 
 
         //gameover
@@ -191,6 +219,8 @@ public class GameEngine extends ListenerPanel {
             if(gameOverWord.getY()<maxY/2+50) {
                 gameOverWord.setY(gameOverWord.getY()+10);
             }
+            backGroundShadow.draw(gl);
+
             /**Render Text*/
             textRenderer.beginRendering(maxX-minX, maxY-minY);
             textRenderer.draw("Your Score is:"+score,(int)gameOverWord.getX()+50,(int)(gameOverWord.getY()- gameOverWord.getHeight()-10));
@@ -204,7 +234,7 @@ public class GameEngine extends ListenerPanel {
             for(int i=0;i<0xFF;i++)
                 if (isKeyPressed(i)&&gameOverWord.getY()>=maxY/2.0) {
                     returnMenu.run();
-                    gameOverWord.setY(-gameOverWord.getHeight());
+//                    gameOverWord.setY(-gameOverWord.getHeight());
                     currentGame=GameState.STOP;
                 }
 
@@ -239,7 +269,8 @@ public class GameEngine extends ListenerPanel {
 
 
     private void drawBg(GL gl){
-        bgLocation+=scrollDy;
+       if(currentGame==GameState.PLAYING)
+           bgLocation+=scrollDy;
         bgLocation%=bgImage.getHeight();
         for (int i=0,bgStart=-bgLocation;i<=repeatBG;i++) {
             bgImage.setY(bgStart);
