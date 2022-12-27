@@ -116,7 +116,7 @@ public class PhysicsScene {
             deltaX-= accelration_factor;
     }
     private void jump(){
-        if (deltaX != 0) {
+        if (deltaX >2) {
             deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(projectile_theta));
             deltaY += (Math.sqrt(49 + Math.abs(deltaX) * Math.abs(deltaX))) * Math.sin(Math.toRadians(90 - projectile_theta));
         } else
