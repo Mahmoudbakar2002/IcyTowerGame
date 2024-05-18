@@ -36,15 +36,19 @@ In "Icy Tower," the player controls a character who jumps up an endless series o
 Here are some screenshots from the game:
 
 ![Main Menu](screenshots/Screenshot1.png)
+
 *Main menu for the game*
 
 ![Game Screen](screenshots/Screenshot2.png)
+
 *Game screen*
 
 ![Character Jumping](screenshots/Screenshot3.png)
+
 *Character jumping on platforms*
 
 ![Different Floors](screenshots/Screenshot4.png)
+
 *Game has different floors depending on score*
 
 ## How to Run
