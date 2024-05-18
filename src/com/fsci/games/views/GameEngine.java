@@ -59,6 +59,7 @@ public class GameEngine extends ListenerPanel {
 
     private Music m,dieAndTryAgain;
 
+    private static final int MAX_SCORE=3000;
 
     /***  Runnable to return to Main menu*/
     private Runnable returnMenu;
@@ -89,7 +90,7 @@ public class GameEngine extends ListenerPanel {
         physics=new PhysicsScene(player,minX,maxX,minY,maxY);
         floorFactory=new FloorFactory(maxX,maxY,100);
         m= MusicEngine.getGameMusic();
-        dieAndTryAgain=MusicEngine.getGameMusic();
+        dieAndTryAgain=MusicEngine.getDieAndtTyAgineSound();
     }
 
     /* reset function to return game state to initial state */
@@ -155,12 +156,15 @@ public class GameEngine extends ListenerPanel {
         resetGame();
     }
 
+    int val=0;
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
 
         if(currentGame==GameState.STOP) return;
+
+
 
         if(currentGame==GameState.PLAYING&&isKeyPressed(KeyEvent.VK_P)){
             currentGame=GameState.PAUSE;
@@ -170,19 +174,48 @@ public class GameEngine extends ListenerPanel {
 
 
         if(player.getY()>maxY/2.0){
-            if(Math.abs(maxY/2.0 - player.getY())>=50)
+            if(Math.abs(maxY/2.0 - player.getY())>=50) {
                 scrollDy=5;
-            else if(Math.abs(maxY/2.0 - player.getY())>=100)
+            }
+            else if(Math.abs(maxY/2.0 - player.getY())>=100) {
                 scrollDy=10;
-            else
+            }
+            else {
                 scrollDy=floorFactory.getFloorIndex()/50+1;
+            }
         }
         // draw background
         drawBg(gl);
         floorFactory.drawFloors();
 
+        if(score>=MAX_SCORE){
+            backGroundShadow.draw(gl);
+            scoreChecker.accept(score);
+            val++;
+            /**Render Text*/
+            textRenderer.beginRendering(maxX-minX, maxY-minY);
+            textRenderer.draw("Your  Win BRO !!! :",150,(int)(maxY/2 - 100));
+//            textRenderer.endRendering();
+
+            textRenderer.draw("Your Score is:"+score,100,(int)(maxY/2 - 200));
+            textRenderer.endRendering();
 
 
+
+            smallTextRender.beginRendering(maxX-minX, maxY-minY);
+            smallTextRender.draw("press any key to return",100,(int)(maxY/2.0));
+            smallTextRender.endRendering();
+
+
+            for(int i=0;i<0xFF;i++)
+                if (isKeyPressed(i)&&val>=200) {
+                    returnMenu.run();
+                    currentGame=GameState.STOP;
+                }
+
+
+            return;
+        }
         // draw and scroll
         if(currentGame== GameState.PLAYING){
             floorFactory.scrollDown(scrollDy);

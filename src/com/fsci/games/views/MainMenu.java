@@ -1,5 +1,7 @@
 package com.fsci.games.views;
 
+import com.fsci.games.controller.Music;
+import com.fsci.games.controller.MusicEngine;
 import com.fsci.games.utills.FontLoader;
 
 import javax.swing.*;
@@ -17,13 +19,14 @@ public class MainMenu extends AbstractGameView{
     private String menu[]={"Play","Setting","How to play","Info","Score","exit"};
     private JLabel menuButtons[];
     private int currentSelection=0;
-
+    private Music sound;
     private Consumer<Integer> function;
 
 
     public MainMenu(Consumer<Integer> function){
         this.function=function;
-
+        sound = MusicEngine.getMenuSound();
+        sound.play();
         paperImage=new ImageIcon(getClass().getResource("/assets/menu/paper.png")).getImage();
 
 
@@ -73,5 +76,13 @@ public class MainMenu extends AbstractGameView{
         if(e.getKeyCode()==KeyEvent.VK_SPACE||e.getKeyCode()==KeyEvent.VK_ENTER)
             function.accept(currentSelection+1);
     }
-
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if(b){
+            sound.restart();
+        }else{
+            sound.stop();
+        }
+    }
 }
